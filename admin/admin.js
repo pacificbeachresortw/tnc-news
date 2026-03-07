@@ -104,6 +104,100 @@ function bindEvents() {
   $('list-filter').addEventListener('change', renderList);
   $('modal-cancel').addEventListener('click', closeModal);
   $('modal-confirm').addEventListener('click', confirmDelete);
+
+  $('btn-add-image').addEventListener('click', addExtraImageSlot);
+}
+
+/* EXTRA IMAGES */
+var extraImages = [];
+
+function addExtraImageSlot(prefill) {
+  var idx = extraImages.length;
+  var item = { url: '', source: '', photographer: '' };
+  if (prefill && typeof prefill === 'object') {
+    item = { url: prefill.url || '', source: prefill.source || '', photographer: prefill.photographer || '' };
+  }
+  extraImages.push(item);
+
+  var slot = document.createElement('div');
+  slot.className = 'extra-img-slot';
+  slot.dataset.idx = idx;
+  slot.style.cssText = 'background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px;display:flex;flex-direction:column;gap:8px;';
+  slot.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">'
+    + '<span style="font-size:0.78rem;font-weight:600;color:var(--text-secondary)"><i class="fa-regular fa-image"></i> \u5167\u6587\u5716\u7247 #' + (idx+1) + '</span>'
+    + '<button type="button" class="btn btn-ghost btn-sm" style="margin-left:auto;padding:3px 8px;" onclick="removeExtraImage(' + idx + ')"><i class="fa-solid fa-trash"></i></button>'
+    + '</div>'
+    + '<div style="display:flex;gap:8px;">'
+    + '<input type="url" class="form-input" placeholder="\u5716\u7247\u7DB2\u5740..." value="' + esc(item.url) + '" style="flex:1;font-size:0.78rem;" oninput="extraImages[' + idx + '].url=this.value;updatePreview()" />'
+    + '<button type="button" class="btn btn-secondary btn-sm" onclick="triggerExtraUpload(' + idx + ')"><i class="fa-solid fa-upload"></i></button>'
+    + '</div>'
+    + '<input type="file" accept="image/*" style="display:none" class="extra-file-input" />'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
+    + '<input type="text" class="form-input" placeholder="\u5716\u7247\u4F86\u6E90" value="' + esc(item.source) + '" style="font-size:0.78rem;" oninput="extraImages[' + idx + '].source=this.value" />'
+    + '<input type="text" class="form-input" placeholder="\u651D\u5F71\u8A18\u8005" value="' + esc(item.photographer) + '" style="font-size:0.78rem;" oninput="extraImages[' + idx + '].photographer=this.value" />'
+    + '</div>'
+    + '<div class="upload-progress extra-upload-progress" style="display:none;align-items:center;gap:8px;font-size:0.8rem;color:var(--text-secondary);"><div class="spinner"></div><span>\u4E0A\u50B3\u4E2D...</span></div>';
+
+  if (item.url) {
+    var preview = document.createElement('img');
+    preview.src = item.url;
+    preview.style.cssText = 'width:100%;height:100px;object-fit:cover;border-radius:var(--radius-sm);';
+    slot.appendChild(preview);
+  }
+
+  var fileInput = slot.querySelector('.extra-file-input');
+  fileInput.addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    if (!state.apiKeys.imgbbKey) { toast('\u8ACB\u5148\u8A2D\u5B9A imgbb API Key', 'error'); return; }
+    var prog = slot.querySelector('.extra-upload-progress');
+    prog.style.display = 'flex';
+    var fd = new FormData();
+    fd.append('image', file);
+    fetch('https://api.imgbb.com/1/upload?key=' + state.apiKeys.imgbbKey, { method:'POST', body:fd })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data.success) {
+          extraImages[idx].url = data.data.url;
+          slot.querySelector('input[type="url"]').value = data.data.url;
+          var existImg = slot.querySelector('img');
+          if (existImg) existImg.src = data.data.url;
+          else {
+            var img2 = document.createElement('img');
+            img2.src = data.data.url;
+            img2.style.cssText = 'width:100%;height:100px;object-fit:cover;border-radius:var(--radius-sm);';
+            slot.appendChild(img2);
+          }
+          updatePreview();
+          toast('\u5716\u7247\u4E0A\u50B3\u6210\u529F', 'success');
+        } else { throw new Error('\u4E0A\u50B3\u5931\u6557'); }
+      })
+      .catch(function(err){ toast('\u5716\u7247\u4E0A\u50B3\u5931\u6557\uFF1A' + err.message, 'error'); })
+      .finally(function(){ prog.style.display = 'none'; });
+  });
+
+  $('extra-images-list').appendChild(slot);
+}
+
+function triggerExtraUpload(idx) {
+  var slots = $('extra-images-list').querySelectorAll('.extra-img-slot');
+  var slot = slots[idx] ? slots[idx] : document.querySelector('.extra-img-slot[data-idx="' + idx + '"]');
+  if (slot) slot.querySelector('.extra-file-input').click();
+}
+
+function removeExtraImage(idx) {
+  extraImages.splice(idx, 1);
+  var list = $('extra-images-list');
+  list.innerHTML = '';
+  var copy = extraImages.slice();
+  extraImages = [];
+  copy.forEach(function(item){ addExtraImageSlot(item); });
+  updatePreview();
+}
+
+function clearExtraImages() {
+  extraImages = [];
+  $('extra-images-list').innerHTML = '';
 }
 
 function bindFormLivePreview() {
@@ -287,8 +381,11 @@ function saveNews() {
     excerpt: $('f-excerpt').value.trim(),
     content: content,
     author: $('f-author').value.trim() || 'TNC \u7DE8\u8F2F',
-    date: $('f-date').value || new Date().toISOString().slice(0, 10),
+    date: $('f-date').value || new Date().toISOString().slice(0, 16),
     image: state.imageUrl,
+    imageSource: $('img-source').value.trim(),
+    imagePhotographer: $('img-photographer').value.trim(),
+    extraImages: extraImages.filter(function(i){ return i.url; }),
     published: $('f-published').checked
   };
 
@@ -322,6 +419,9 @@ function resetForm() {
   $('f-published').checked = true;
   setDefaultDate();
   clearImage();
+  clearExtraImages();
+  if ($('img-source')) $('img-source').value = '';
+  if ($('img-photographer')) $('img-photographer').value = '';
   $('edit-mode-badge').classList.remove('show');
   $('btn-save').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> \u5132\u5B58\u65B0\u805E';
   $('btn-save').className = 'btn btn-primary';
@@ -342,6 +442,12 @@ function loadForEdit(article) {
   $('f-published').checked = article.published !== false;
   if (article.image) { setImage(article.image); $('img-url-input').value = article.image; }
   else { clearImage(); }
+  if ($('img-source')) $('img-source').value = article.imageSource || '';
+  if ($('img-photographer')) $('img-photographer').value = article.imagePhotographer || '';
+  clearExtraImages();
+  if (article.extraImages && article.extraImages.length) {
+    article.extraImages.forEach(function(img){ addExtraImageSlot(img); });
+  }
   $('edit-mode-badge').classList.add('show');
   $('btn-save').innerHTML = '<i class="fa-solid fa-pen"></i> \u66F4\u65B0\u65B0\u805E';
   $('btn-save').className = 'btn btn-blue';

@@ -250,6 +250,25 @@
               <input type="url" class="form-input" id="img-url-input" placeholder="或直接貼上圖片網址..." />
               <button class="btn btn-secondary btn-sm" id="btn-img-url"><i class="fa-solid fa-link"></i> 套用</button>
             </div>
+            <div class="form-row" style="margin-top:8px">
+              <div>
+                <label class="form-label" style="margin-bottom:4px"><i class="fa-solid fa-copyright"></i> 圖片來源</label>
+                <input type="text" class="form-input" id="img-source" placeholder="例：路透社、AP、TNC攝" />
+              </div>
+              <div>
+                <label class="form-label" style="margin-bottom:4px"><i class="fa-solid fa-camera"></i> 攝影記者</label>
+                <input type="text" class="form-input" id="img-photographer" placeholder="例：王小明" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 內文圖片 -->
+          <div class="form-group">
+            <label class="form-label"><i class="fa-solid fa-images"></i> 內文圖片</label>
+            <div id="extra-images-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:8px"></div>
+            <button class="btn btn-secondary btn-sm btn-full" type="button" id="btn-add-image">
+              <i class="fa-solid fa-plus"></i> 新增內文圖片
+            </button>
           </div>
 
           <div class="form-group">
