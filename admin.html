@@ -105,7 +105,68 @@
       <div class="api-actions">
         <button class="btn btn-primary btn-sm" id="btn-api-save"><i class="fa-solid fa-floppy-disk"></i> 儲存設定</button>
         <button class="btn btn-secondary btn-sm" id="btn-api-test"><i class="fa-solid fa-wifi"></i> 測試連線</button>
+        <button class="btn btn-ghost btn-sm" id="btn-api-guide-toggle" onclick="(function(){var g=document.getElementById('api-guide');g.style.maxHeight=g.style.maxHeight==='none'||g.style.maxHeight==='2000px'?'0':'2000px';})()">
+          <i class="fa-solid fa-circle-question"></i> 設定教學
+        </button>
       </div>
+
+      <!-- API GUIDE -->
+      <div id="api-guide" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease">
+        <div style="padding:16px 0 4px">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+
+            <!-- JSONbin Key -->
+            <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px">
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+                <i class="fa-solid fa-database" style="color:var(--text-muted)"></i>
+                <span style="font-size:0.8rem;font-weight:600;color:var(--text-primary)">JSONbin Master Key</span>
+              </div>
+              <ol style="padding-left:16px;font-size:0.77rem;color:var(--text-secondary);line-height:1.8">
+                <li>前往 <a href="https://jsonbin.io" target="_blank" style="color:var(--text-primary);text-decoration:underline">jsonbin.io</a> 註冊帳號</li>
+                <li>登入後點右上角頭像 → <strong style="color:var(--text-primary)">API Keys</strong></li>
+                <li>複製 <strong style="color:var(--text-primary)">Secret Key</strong>（以 <code style="background:var(--bg-4);padding:1px 5px;border-radius:3px">$2a$</code> 開頭）</li>
+                <li>貼入左側「JSONbin Master Key」欄位</li>
+              </ol>
+            </div>
+
+            <!-- Bin ID -->
+            <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px">
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+                <i class="fa-solid fa-box" style="color:var(--text-muted)"></i>
+                <span style="font-size:0.8rem;font-weight:600;color:var(--text-primary)">JSONbin Bin ID</span>
+              </div>
+              <ol style="padding-left:16px;font-size:0.77rem;color:var(--text-secondary);line-height:1.8">
+                <li>登入 jsonbin.io 後點左側 <strong style="color:var(--text-primary)">Bins</strong></li>
+                <li>點 <strong style="color:var(--text-primary)">+ Create Bin</strong> 新增一個 Bin</li>
+                <li>初始內容輸入：<code style="background:var(--bg-4);padding:1px 5px;border-radius:3px">{"news":[]}</code></li>
+                <li>建立後複製網址列中的 Bin ID（24位英數字串）</li>
+                <li>貼入「JSONbin Bin ID」欄位</li>
+              </ol>
+            </div>
+
+            <!-- ImgBB Key -->
+            <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px">
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+                <i class="fa-solid fa-image" style="color:var(--text-muted)"></i>
+                <span style="font-size:0.8rem;font-weight:600;color:var(--text-primary)">ImgBB API Key</span>
+              </div>
+              <ol style="padding-left:16px;font-size:0.77rem;color:var(--text-secondary);line-height:1.8">
+                <li>前往 <a href="https://imgbb.com" target="_blank" style="color:var(--text-primary);text-decoration:underline">imgbb.com</a> 註冊帳號</li>
+                <li>登入後前往 <a href="https://api.imgbb.com" target="_blank" style="color:var(--text-primary);text-decoration:underline">api.imgbb.com</a></li>
+                <li>點 <strong style="color:var(--text-primary)">Get API key</strong></li>
+                <li>複製 API Key 並貼入「ImgBB API Key」欄位</li>
+                <li>此 Key 用於上傳封面圖片</li>
+              </ol>
+            </div>
+
+          </div>
+          <div style="margin-top:12px;padding:10px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:0.77rem;color:var(--text-muted);display:flex;align-items:flex-start;gap:8px">
+            <i class="fa-solid fa-lock" style="margin-top:2px;flex-shrink:0"></i>
+            <span>API 金鑰儲存於瀏覽器的 localStorage，不會傳送至任何第三方伺服器。建議在私人裝置上使用後台。設定完成後點「儲存設定」，再點「測試連線」確認是否正常運作。</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
