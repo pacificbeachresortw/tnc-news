@@ -24,8 +24,23 @@ window.adminInit = function() {
 };
 
 function setDefaultDate() {
-  const d = $('f-date');
-  if (d && !d.value) d.value = new Date().toISOString().slice(0, 10);
+  var d = $('f-date');
+  if (d && !d.value) {
+    var now = new Date();
+    var local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+    d.value = local.toISOString().slice(0, 16);
+  }
+}
+
+function formatDateTime(val) {
+  if (!val) return '';
+  var d = new Date(val);
+  if (isNaN(d.getTime())) return val;
+  var m = d.getMonth() + 1;
+  var day = d.getDate();
+  var hh = String(d.getHours()).padStart(2, '0');
+  var mm = String(d.getMinutes()).padStart(2, '0');
+  return m + '\u6708' + day + '\u65E5 ' + hh + ':' + mm;
 }
 
 function loadApiKeys() {
@@ -300,7 +315,7 @@ function resetForm() {
   state.editingId = null;
   state.imageUrl = '';
   $('f-title').value = '';
-  $('f-category').value = '\u793E\u6703';
+  $('f-category').value = '\u5373\u6642';
   $('f-excerpt').value = '';
   $('f-content').value = '';
   $('f-author').value = '';
@@ -392,7 +407,7 @@ function renderList() {
       + '<div class="news-item-title">' + esc(n.title) + '</div>'
       + '<div class="news-item-meta">'
       + '<span class="news-item-cat">' + (n.category || '') + '</span>'
-      + '<span class="news-item-date"><i class="fa-regular fa-calendar"></i>' + (n.date || '') + '</span>'
+      + '<span class="news-item-date"><i class="fa-regular fa-clock"></i>' + formatDateTime(n.date) + '</span>'
       + statusHtml
       + '</div></div>'
       + '<div class="news-item-actions">'
