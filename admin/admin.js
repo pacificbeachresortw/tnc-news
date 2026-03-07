@@ -11,13 +11,17 @@ let pendingDeleteId = null;
 
 const $ = id => document.getElementById(id);
 
-document.addEventListener('DOMContentLoaded', () => {
+/* Admin init is called by login.js after authentication */
+window._adminInited = false;
+window.adminInit = function() {
+  if (window._adminInited) return;
+  window._adminInited = true;
   loadApiKeys();
   bindEvents();
   bindFormLivePreview();
   setDefaultDate();
   fetchNews();
-});
+};
 
 function setDefaultDate() {
   const d = $('f-date');

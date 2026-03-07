@@ -10,255 +10,314 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="admin/admin-base.css" />
 <link rel="stylesheet" href="admin/admin-preview.css" />
+<link rel="stylesheet" href="admin/login.css" />
 </head>
 <body>
 
-<!-- TOPBAR -->
-<header class="topbar">
-  <div class="topbar-left">
-    <a href="index.html" class="topbar-logo">
+<!-- ===== LOGIN PAGE ===== -->
+<div id="login-page" style="display:none">
+  <div class="login-bg"></div>
+  <div class="login-card" id="login-card">
+    <div class="login-logo">
       <img src="image/logo.png" alt="TNC NEWS" />
-      <span class="topbar-logo-text">TNC <span>NEWS</span></span>
-    </a>
-    <div class="topbar-divider"></div>
-    <span class="topbar-badge"><i class="fa-solid fa-screwdriver-wrench"></i> Admin</span>
-  </div>
-  <div class="topbar-right">
-    <div class="status-indicator">
-      <span class="status-dot" id="status-dot"></span>
-      <span id="status-text">未連線</span>
+      <span class="login-logo-text">TNC <span>NEWS</span></span>
     </div>
-    <button class="topbar-btn" id="btn-api-toggle">
-      <i class="fa-solid fa-gear"></i> API 設定
-    </button>
-    <button class="topbar-btn" id="btn-new">
-      <i class="fa-solid fa-plus"></i> 新增
-    </button>
-    <a href="index.html" class="topbar-btn" target="_blank">
-      <i class="fa-solid fa-arrow-up-right-from-square"></i> 前台
-    </a>
-  </div>
-</header>
+    <div class="login-subtitle">ADMIN PANEL</div>
 
-<!-- API SETTINGS PANEL -->
-<div class="api-panel" id="api-panel">
-  <div class="api-panel-inner">
-    <div class="api-panel-label"><i class="fa-solid fa-key"></i> API 金鑰設定</div>
-    <div class="api-grid">
-      <div class="api-field">
-        <label><i class="fa-solid fa-database"></i>JSONbin Master Key</label>
-        <input type="password" class="api-input" id="api-jsonbin-key" placeholder="$2a$10$..." autocomplete="off" />
-      </div>
-      <div class="api-field">
-        <label><i class="fa-solid fa-box"></i>JSONbin Bin ID</label>
-        <input type="text" class="api-input" id="api-bin-id" placeholder="64a1b2c3d4e5f6..." autocomplete="off" />
-      </div>
-      <div class="api-field">
-        <label><i class="fa-solid fa-image"></i>ImgBB API Key</label>
-        <input type="password" class="api-input" id="api-imgbb-key" placeholder="abc123..." autocomplete="off" />
+    <div class="login-form-group">
+      <div class="login-label"><i class="fa-solid fa-lock"></i> 管理員密碼</div>
+      <div class="login-input-wrap">
+        <input type="password" class="login-input" id="login-pwd" placeholder="輸入密碼..." autocomplete="current-password" />
+        <i class="fa-solid fa-eye login-input-icon" id="pwd-toggle-icon"></i>
       </div>
     </div>
-    <div class="api-actions">
-      <button class="btn btn-primary btn-sm" id="btn-api-save"><i class="fa-solid fa-floppy-disk"></i> 儲存設定</button>
-      <button class="btn btn-secondary btn-sm" id="btn-api-test"><i class="fa-solid fa-wifi"></i> 測試連線</button>
+
+    <div class="login-error" id="login-error">
+      <i class="fa-solid fa-circle-xmark"></i>
+      <span></span>
+    </div>
+
+    <button class="login-btn" id="login-btn">
+      <i class="fa-solid fa-right-to-bracket"></i> 登入
+    </button>
+
+    <div class="login-footer">
+      預設密碼：<code style="background:var(--bg-3);padding:2px 6px;border-radius:4px;color:var(--accent)">tnc2026</code>
+      <br />
+      <a class="change-pwd-link" id="btn-change-pwd" style="margin:10px auto 0;display:inline-flex">
+        <i class="fa-solid fa-key"></i> 變更密碼
+      </a>
     </div>
   </div>
 </div>
 
-<!-- MAIN -->
-<div class="main-wrap">
-  <div class="main-layout">
+<!-- ===== ADMIN PAGE ===== -->
+<div id="admin-page" style="display:none;flex-direction:column;flex:1;min-height:100vh">
 
-    <!-- LEFT: FORM PANEL -->
-    <div class="form-panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <i class="fa-solid fa-pen-to-square"></i>
-          <span id="panel-form-title">新增新聞</span>
-          <span class="edit-mode-badge" id="edit-mode-badge">編輯中</span>
-        </div>
-        <button class="btn btn-ghost btn-sm" id="btn-preview-toggle">
-          <i class="fa-regular fa-eye"></i> 預覽
-        </button>
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <a href="index.html" class="topbar-logo">
+        <img src="image/logo.png" alt="TNC NEWS" />
+        <span class="topbar-logo-text">TNC <span>NEWS</span></span>
+      </a>
+      <div class="topbar-divider"></div>
+      <span class="topbar-badge"><i class="fa-solid fa-screwdriver-wrench"></i> Admin</span>
+    </div>
+    <div class="topbar-right">
+      <div class="status-indicator">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">未連線</span>
       </div>
+      <button class="topbar-btn" id="btn-api-toggle">
+        <i class="fa-solid fa-gear"></i> API 設定
+      </button>
+      <button class="topbar-btn" id="btn-new">
+        <i class="fa-solid fa-plus"></i> 新增
+      </button>
+      <a href="index.html" class="topbar-btn" target="_blank">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i> 前台
+      </a>
+      <button class="topbar-btn" id="btn-logout" title="登出">
+        <i class="fa-solid fa-right-from-bracket"></i> 登出
+      </button>
+    </div>
+  </header>
 
-      <div class="panel-body">
-
-        <!-- Title -->
-        <div class="form-group">
-          <label class="form-label">
-            <i class="fa-solid fa-heading"></i> 標題 <span class="req">*</span>
-          </label>
-          <input type="text" class="form-input" id="f-title" placeholder="輸入新聞標題..." maxlength="80" />
-          <div class="char-count"><span data-count="title">0 / 80</span></div>
+  <!-- API SETTINGS PANEL -->
+  <div class="api-panel" id="api-panel">
+    <div class="api-panel-inner">
+      <div class="api-panel-label"><i class="fa-solid fa-key"></i> API 金鑰設定</div>
+      <div class="api-grid">
+        <div class="api-field">
+          <label><i class="fa-solid fa-database"></i>JSONbin Master Key</label>
+          <input type="password" class="api-input" id="api-jsonbin-key" placeholder="$2a$10$..." autocomplete="off" />
         </div>
+        <div class="api-field">
+          <label><i class="fa-solid fa-box"></i>JSONbin Bin ID</label>
+          <input type="text" class="api-input" id="api-bin-id" placeholder="64a1b2c3d4e5f6..." autocomplete="off" />
+        </div>
+        <div class="api-field">
+          <label><i class="fa-solid fa-image"></i>ImgBB API Key</label>
+          <input type="password" class="api-input" id="api-imgbb-key" placeholder="abc123..." autocomplete="off" />
+        </div>
+      </div>
+      <div class="api-actions">
+        <button class="btn btn-primary btn-sm" id="btn-api-save"><i class="fa-solid fa-floppy-disk"></i> 儲存設定</button>
+        <button class="btn btn-secondary btn-sm" id="btn-api-test"><i class="fa-solid fa-wifi"></i> 測試連線</button>
+      </div>
+    </div>
+  </div>
 
-        <!-- Category & Date -->
-        <div class="form-row">
-          <div class="form-group" style="margin-bottom:0">
-            <label class="form-label"><i class="fa-solid fa-tag"></i> 分類</label>
-            <select class="form-select" id="f-category">
-              <option value="社會">社會</option>
-              <option value="國際">國際</option>
-              <option value="科技">科技</option>
-              <option value="娛樂">娛樂</option>
-              <option value="體育">體育</option>
-              <option value="生活">生活</option>
-            </select>
+  <!-- MAIN -->
+  <div class="main-wrap">
+    <div class="main-layout">
+
+      <!-- LEFT: FORM PANEL -->
+      <div class="form-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span id="panel-form-title">新增新聞</span>
+            <span class="edit-mode-badge" id="edit-mode-badge">編輯中</span>
           </div>
-          <div class="form-group" style="margin-bottom:0">
-            <label class="form-label"><i class="fa-regular fa-calendar"></i> 日期</label>
-            <input type="date" class="form-input" id="f-date" />
+          <button class="btn btn-ghost btn-sm" id="btn-preview-toggle">
+            <i class="fa-regular fa-eye"></i> 預覽
+          </button>
+        </div>
+
+        <div class="panel-body">
+          <div class="form-group">
+            <label class="form-label"><i class="fa-solid fa-heading"></i> 標題 <span class="req">*</span></label>
+            <input type="text" class="form-input" id="f-title" placeholder="輸入新聞標題..." maxlength="80" />
+            <div class="char-count"><span data-count="title">0 / 80</span></div>
           </div>
-        </div>
 
-        <!-- Author -->
-        <div class="form-group" style="margin-top:14px">
-          <label class="form-label"><i class="fa-regular fa-user"></i> 作者</label>
-          <input type="text" class="form-input" id="f-author" placeholder="TNC 編輯" />
-        </div>
-
-        <!-- Excerpt -->
-        <div class="form-group">
-          <label class="form-label"><i class="fa-solid fa-align-left"></i> 摘要</label>
-          <textarea class="form-textarea" id="f-excerpt" placeholder="輸入新聞摘要（選填，最多 200 字）..." maxlength="200"></textarea>
-          <div class="char-count"><span data-count="excerpt">0 / 200</span></div>
-        </div>
-
-        <!-- Content -->
-        <div class="form-group">
-          <label class="form-label">
-            <i class="fa-solid fa-align-justify"></i> 內文 <span class="req">*</span>
-          </label>
-          <textarea class="form-textarea content-area" id="f-content" placeholder="輸入新聞內文...&#10;&#10;每個段落用換行分隔即可。"></textarea>
-          <div class="form-hint"><i class="fa-solid fa-circle-info"></i> 每行會自動包成段落。可使用 HTML 標籤如 <b>、<a> 等。</div>
-        </div>
-
-        <!-- Cover Image -->
-        <div class="form-group">
-          <label class="form-label"><i class="fa-regular fa-image"></i> 封面圖片</label>
-          <div class="img-upload-area" id="img-upload-area">
-            <div class="img-upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-            <div class="img-upload-hint">拖放圖片或<span>點擊上傳</span></div>
-            <img class="img-preview-el" id="img-preview-el" src="" alt="preview" />
-            <div class="img-overlay">
-              <button class="img-overlay-btn" id="btn-img-change"><i class="fa-solid fa-arrows-rotate"></i> 更換</button>
-              <button class="img-overlay-btn" id="btn-img-remove"><i class="fa-solid fa-trash"></i> 移除</button>
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label"><i class="fa-solid fa-tag"></i> 分類</label>
+              <select class="form-select" id="f-category">
+                <option value="社會">社會</option>
+                <option value="國際">國際</option>
+                <option value="科技">科技</option>
+                <option value="娛樂">娛樂</option>
+                <option value="體育">體育</option>
+                <option value="生活">生活</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label"><i class="fa-regular fa-calendar"></i> 日期</label>
+              <input type="date" class="form-input" id="f-date" />
             </div>
           </div>
-          <input type="file" id="img-file-input" accept="image/*" style="display:none" />
-          <div class="upload-progress" id="upload-progress">
-            <div class="spinner"></div>
-            <span>上傳中...</span>
-          </div>
-          <div class="img-url-row">
-            <input type="url" class="form-input" id="img-url-input" placeholder="或直接貼上圖片網址..." />
-            <button class="btn btn-secondary btn-sm" id="btn-img-url"><i class="fa-solid fa-link"></i> 套用</button>
-          </div>
-        </div>
 
-        <!-- Published -->
-        <div class="form-group">
-          <div class="toggle-row">
-            <div class="toggle-label">
-              <i class="fa-solid fa-globe"></i> 發布狀態
+          <div class="form-group" style="margin-top:14px">
+            <label class="form-label"><i class="fa-regular fa-user"></i> 作者</label>
+            <input type="text" class="form-input" id="f-author" placeholder="TNC 編輯" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="fa-solid fa-align-left"></i> 摘要</label>
+            <textarea class="form-textarea" id="f-excerpt" placeholder="輸入新聞摘要（選填，最多 200 字）..." maxlength="200"></textarea>
+            <div class="char-count"><span data-count="excerpt">0 / 200</span></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="fa-solid fa-align-justify"></i> 內文 <span class="req">*</span></label>
+            <textarea class="form-textarea content-area" id="f-content" placeholder="輸入新聞內文...&#10;&#10;每個段落用換行分隔即可。"></textarea>
+            <div class="form-hint"><i class="fa-solid fa-circle-info"></i> 每行會自動包成段落。</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="fa-regular fa-image"></i> 封面圖片</label>
+            <div class="img-upload-area" id="img-upload-area">
+              <div class="img-upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+              <div class="img-upload-hint">拖放圖片或<span>點擊上傳</span></div>
+              <img class="img-preview-el" id="img-preview-el" src="" alt="preview" />
+              <div class="img-overlay">
+                <button class="img-overlay-btn" id="btn-img-change"><i class="fa-solid fa-arrows-rotate"></i> 更換</button>
+                <button class="img-overlay-btn" id="btn-img-remove"><i class="fa-solid fa-trash"></i> 移除</button>
+              </div>
             </div>
-            <label class="toggle">
-              <input type="checkbox" id="f-published" checked />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-        </div>
-
-      </div><!-- /panel-body -->
-
-      <div class="form-actions">
-        <button class="btn btn-primary" id="btn-save" style="flex:1">
-          <i class="fa-solid fa-floppy-disk"></i> 儲存新聞
-        </button>
-        <button class="btn btn-ghost" id="btn-reset">
-          <i class="fa-solid fa-rotate-left"></i> 重置
-        </button>
-      </div>
-    </div><!-- /form-panel -->
-
-    <!-- RIGHT: PREVIEW + LIST PANEL -->
-    <div class="preview-panel">
-      <div class="preview-tabs">
-        <div class="preview-tab active" data-tab="preview">
-          <i class="fa-regular fa-eye"></i> 文章預覽
-        </div>
-        <div class="preview-tab" data-tab="list">
-          <i class="fa-solid fa-list"></i> 新聞列表
-          <span id="list-count" style="font-size:0.72rem;color:var(--text-muted);margin-left:4px"></span>
-        </div>
-      </div>
-
-      <!-- PREVIEW TAB -->
-      <div class="preview-tab-content active" data-tab="preview">
-        <div class="article-preview" id="preview-content">
-          <div class="preview-empty">
-            <i class="fa-regular fa-newspaper"></i>
-            <p>開始輸入以預覽文章效果</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- LIST TAB -->
-      <div class="preview-tab-content" data-tab="list">
-        <div class="list-panel">
-          <div class="list-toolbar">
-            <div class="list-search">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" id="list-search-input" placeholder="搜尋新聞標題或作者..." />
+            <input type="file" id="img-file-input" accept="image/*" style="display:none" />
+            <div class="upload-progress" id="upload-progress">
+              <div class="spinner"></div>
+              <span>上傳中...</span>
             </div>
-            <select class="list-filter" id="list-filter">
-              <option value="">全部分類</option>
-              <option value="社會">社會</option>
-              <option value="國際">國際</option>
-              <option value="科技">科技</option>
-              <option value="娛樂">娛樂</option>
-              <option value="體育">體育</option>
-              <option value="生活">生活</option>
-            </select>
-            <button class="btn btn-secondary btn-sm" onclick="fetchNews()">
-              <i class="fa-solid fa-arrows-rotate"></i>
-            </button>
+            <div class="img-url-row">
+              <input type="url" class="form-input" id="img-url-input" placeholder="或直接貼上圖片網址..." />
+              <button class="btn btn-secondary btn-sm" id="btn-img-url"><i class="fa-solid fa-link"></i> 套用</button>
+            </div>
           </div>
-          <div class="news-list" id="news-list">
-            <div class="news-list-empty">
+
+          <div class="form-group">
+            <div class="toggle-row">
+              <div class="toggle-label"><i class="fa-solid fa-globe"></i> 發布狀態</div>
+              <label class="toggle">
+                <input type="checkbox" id="f-published" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" id="btn-save" style="flex:1">
+            <i class="fa-solid fa-floppy-disk"></i> 儲存新聞
+          </button>
+          <button class="btn btn-ghost" id="btn-reset">
+            <i class="fa-solid fa-rotate-left"></i> 重置
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT: PREVIEW + LIST PANEL -->
+      <div class="preview-panel">
+        <div class="preview-tabs">
+          <div class="preview-tab active" data-tab="preview">
+            <i class="fa-regular fa-eye"></i> 文章預覽
+          </div>
+          <div class="preview-tab" data-tab="list">
+            <i class="fa-solid fa-list"></i> 新聞列表
+            <span id="list-count" style="font-size:0.72rem;color:var(--text-muted);margin-left:4px"></span>
+          </div>
+        </div>
+
+        <div class="preview-tab-content active" data-tab="preview">
+          <div class="article-preview" id="preview-content">
+            <div class="preview-empty">
               <i class="fa-regular fa-newspaper"></i>
-              <p>尚無新聞，請先設定 API 金鑰</p>
+              <p>開始輸入以預覽文章效果</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-tab-content" data-tab="list">
+          <div class="list-panel">
+            <div class="list-toolbar">
+              <div class="list-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="list-search-input" placeholder="搜尋新聞標題或作者..." />
+              </div>
+              <select class="list-filter" id="list-filter">
+                <option value="">全部分類</option>
+                <option value="社會">社會</option>
+                <option value="國際">國際</option>
+                <option value="科技">科技</option>
+                <option value="娛樂">娛樂</option>
+                <option value="體育">體育</option>
+                <option value="生活">生活</option>
+              </select>
+              <button class="btn btn-secondary btn-sm" onclick="fetchNews()">
+                <i class="fa-solid fa-arrows-rotate"></i>
+              </button>
+            </div>
+            <div class="news-list" id="news-list">
+              <div class="news-list-empty">
+                <i class="fa-regular fa-newspaper"></i>
+                <p>尚無新聞，請先設定 API 金鑰</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-    </div><!-- /preview-panel -->
-  </div><!-- /main-layout -->
-</div><!-- /main-wrap -->
+    </div>
+  </div>
 
-<!-- DELETE CONFIRM MODAL -->
-<div class="modal-overlay" id="modal-overlay">
+  <!-- DELETE CONFIRM MODAL -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-title"><i class="fa-solid fa-triangle-exclamation"></i> 確認刪除</div>
+      <div class="modal-body" id="modal-body-text">確定要刪除此新聞嗎？</div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="modal-cancel">取消</button>
+        <button class="btn btn-primary" id="modal-confirm"><i class="fa-solid fa-trash"></i> 確認刪除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING OVERLAY -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">載入中...</div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toast-container"></div>
+
+</div><!-- /admin-page -->
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="change-pwd-modal" style="z-index:600">
   <div class="modal">
-    <div class="modal-title"><i class="fa-solid fa-triangle-exclamation"></i> 確認刪除</div>
-    <div class="modal-body" id="modal-body-text">確定要刪除此新聞嗎？</div>
+    <div class="modal-title"><i class="fa-solid fa-key"></i> 變更密碼</div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px">
+      <div>
+        <div class="login-label" style="margin-bottom:5px"><i class="fa-solid fa-lock"></i> 目前密碼</div>
+        <input type="password" class="form-input" id="cp-current" placeholder="輸入目前密碼" />
+      </div>
+      <div>
+        <div class="login-label" style="margin-bottom:5px"><i class="fa-solid fa-lock-open"></i> 新密碼（至少 6 位）</div>
+        <input type="password" class="form-input" id="cp-new" placeholder="輸入新密碼" />
+      </div>
+      <div>
+        <div class="login-label" style="margin-bottom:5px"><i class="fa-solid fa-check"></i> 確認新密碼</div>
+        <input type="password" class="form-input" id="cp-confirm" placeholder="再次輸入新密碼" />
+      </div>
+    </div>
+    <div class="login-error" id="cp-error" style="margin-bottom:12px">
+      <i class="fa-solid fa-circle-xmark"></i>
+      <span></span>
+    </div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" id="modal-cancel">取消</button>
-      <button class="btn btn-primary" id="modal-confirm"><i class="fa-solid fa-trash"></i> 確認刪除</button>
+      <button class="btn btn-ghost" id="cp-cancel">取消</button>
+      <button class="btn btn-primary" id="cp-confirm-btn"><i class="fa-solid fa-floppy-disk"></i> 更新密碼</button>
     </div>
   </div>
 </div>
-
-<!-- LOADING OVERLAY -->
-<div class="loading-overlay" id="loading-overlay">
-  <div class="loading-spinner"></div>
-  <div class="loading-text">載入中...</div>
-</div>
-
-<!-- TOAST CONTAINER -->
-<div class="toast-container" id="toast-container"></div>
 
 <script src="admin/admin.js"></script>
+<script src="admin/login.js"></script>
 </body>
 </html>
