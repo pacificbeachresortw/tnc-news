@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>科技 — TNC NEWS｜台灣網路觀察新聞網</title>
+<link rel="icon" href="../image/weblogo.png" type="image/png" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="category.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+<div id="site-wrapper">
+  <div class="topbar">
+    <div class="topbar-inner container">
+      <div class="topbar-left">
+        <span class="topbar-brand-tag">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6.5" stroke="#fff" stroke-opacity=".3"/><circle cx="7" cy="7" r="3" fill="#fff" fill-opacity=".6"/></svg>
+          TAIWAN NETWORK CENTER
+        </span>
+        <span class="topbar-divider"></span>
+        <i class="fa-solid fa-calendar-days"></i>
+        <span id="live-date"></span>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-follow">FOLLOW US</span>
+        <a href="#" class="topbar-social"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" class="topbar-social"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#" class="topbar-social"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#" class="topbar-social"><i class="fa-brands fa-line"></i></a>
+      </div>
+    </div>
+  </div>
+  <header class="site-header">
+    <div class="header-topline"></div>
+    <div class="header-inner container">
+      <div class="header-logo">
+        <a href="../index.html" class="logo-img-wrap">
+          <img src="../image/logo.png" alt="TNC NEWS" class="logo-img" />
+        </a>
+        <div class="logo-separator"></div>
+      </div>
+      <nav class="main-nav" id="main-nav">
+        <ul>
+          <li><a href="../index.html"><i class="fa-solid fa-house nav-icon"></i>首頁</a></li>
+          <li><a href="society.html"><i class="fa-solid fa-people-group nav-icon"></i>社會</a></li>
+          <li><a href="international.html"><i class="fa-solid fa-earth-asia nav-icon"></i>國際</a></li>
+          <li><a href="tech.html" class="active"><i class="fa-solid fa-microchip nav-icon"></i>科技</a></li>
+          <li><a href="entertainment.html"><i class="fa-solid fa-star nav-icon"></i>娛樂</a></li>
+          <li><a href="sports.html"><i class="fa-solid fa-trophy nav-icon"></i>體育</a></li>
+          <li><a href="life.html"><i class="fa-solid fa-leaf nav-icon"></i>生活</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <button class="search-btn" id="search-toggle" aria-label="搜尋"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <a href="#" class="header-subscribe-btn"><i class="fa-regular fa-bell"></i><span>訂閱</span></a>
+        <button class="hamburger" id="hamburger" aria-label="選單"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="search-bar" id="search-bar">
+      <div class="container">
+        <i class="fa-solid fa-magnifying-glass search-bar-icon"></i>
+        <input type="text" placeholder="搜尋新聞關鍵字…" />
+        <button>搜尋</button>
+      </div>
+    </div>
+    <div class="header-wave"><canvas id="wave-canvas" height="48"></canvas></div>
+  </header>
+  <div class="breaking-bar">
+    <div class="container breaking-inner">
+      <div class="breaking-label"><span class="live-dot"></span><i class="fa-solid fa-bolt"></i> 即時</div>
+      <div class="ticker-wrap"><div class="ticker-track"><span>暫無即時新聞 &nbsp;／&nbsp; 暫無即時新聞 &nbsp;／&nbsp; 暫無即時新聞 &nbsp;／&nbsp; 暫無即時新聞 &nbsp;／&nbsp; 暫無即時新聞</span></div></div>
+    </div>
+  </div>
+  <div class="cat-banner">
+    <div class="container cat-banner-inner">
+      <div class="cat-banner-icon-wrap"><i class="fa-solid fa-microchip"></i></div>
+      <div class="cat-banner-info">
+        <div class="cat-banner-breadcrumb">
+          <a href="../index.html">TNC NEWS</a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span>科技</span>
+        </div>
+        <div class="cat-banner-title"><span class="cat-banner-title-bar"></span>科技</div>
+        <p class="cat-banner-desc">追蹤最新科技趨勢、數位創新與產業動態，掌握 AI、半導體、電動車等前沿科技資訊。</p>
+        <div class="cat-banner-stats">
+          <span class="cat-banner-stat"><i class="fa-regular fa-newspaper"></i> 暫無文章</span>
+          <span class="cat-banner-stat"><i class="fa-regular fa-clock"></i> 最後更新：──</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <main class="cat-page-main">
+    <div class="container">
+      <div class="cat-page-grid">
+        <div class="cat-articles">
+          <div class="cat-featured">
+            <div class="articles-section-header">
+              <div class="articles-section-title"><i class="fa-solid fa-fire-flame-curved"></i> 精選報導</div>
+            </div>
+            <div class="news-card news-card--hero">
+              <div class="card-img card-img--placeholder">
+                <div class="placeholder-icon"><i class="fa-solid fa-microchip"></i></div>
+              </div>
+              <div class="card-body">
+                <span class="card-tag">科技</span>
+                <h2 class="card-title">暫無新聞</h2>
+                <p class="card-excerpt">目前尚無科技新聞，請稍後再訪。內容將於發布後顯示於此處。</p>
+                <div class="card-meta">
+                  <span><i class="fa-regular fa-clock"></i> ──</span>
+                  <span><i class="fa-regular fa-user"></i> TNC 編輯台</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="articles-section-header">
+            <div class="articles-section-title"><i class="fa-solid fa-list"></i> 最新文章</div>
+            <span class="articles-count">共 0 篇</span>
+          </div>
+          <div class="articles-grid">
+            <div class="article-card"><div class="article-card-img"><i class="fa-solid fa-microchip"></i></div><div class="article-card-body"><span class="article-card-tag">科技</span><p class="article-card-title">暫無新聞</p><div class="article-card-meta"><span><i class="fa-regular fa-clock"></i> ──</span></div></div></div>
+            <div class="article-card"><div class="article-card-img"><i class="fa-solid fa-microchip"></i></div><div class="article-card-body"><span class="article-card-tag">科技</span><p class="article-card-title">暫無新聞</p><div class="article-card-meta"><span><i class="fa-regular fa-clock"></i> ──</span></div></div></div>
+            <div class="article-card"><div class="article-card-img"><i class="fa-solid fa-microchip"></i></div><div class="article-card-body"><span class="article-card-tag">科技</span><p class="article-card-title">暫無新聞</p><div class="article-card-meta"><span><i class="fa-regular fa-clock"></i> ──</span></div></div></div>
+            <div class="article-card"><div class="article-card-img"><i class="fa-solid fa-microchip"></i></div><div class="article-card-body"><span class="article-card-tag">科技</span><p class="article-card-title">暫無新聞</p><div class="article-card-meta"><span><i class="fa-regular fa-clock"></i> ──</span></div></div></div>
+            <div class="article-card"><div class="article-card-img"><i class="fa-solid fa-microchip"></i></div><div class="article-card-body"><span class="article-card-tag">科技</span><p class="article-card-title">暫無新聞</p><div class="article-card-meta"><span><i class="fa-regular fa-clock"></i> ──</span></div></div></div>
+            <div class="article-card"><div class="article-card-img"><i class="fa-solid fa-microchip"></i></div><div class="article-card-body"><span class="article-card-tag">科技</span><p class="article-card-title">暫無新聞</p><div class="article-card-meta"><span><i class="fa-regular fa-clock"></i> ──</span></div></div></div>
+          </div>
+          <div class="pagination">
+            <a href="#" class="pagination-btn"><i class="fa-solid fa-chevron-left"></i></a>
+            <a href="#" class="pagination-btn active">1</a>
+            <a href="#" class="pagination-btn">2</a>
+            <a href="#" class="pagination-btn">3</a>
+            <span class="pagination-ellipsis">…</span>
+            <a href="#" class="pagination-btn"><i class="fa-solid fa-chevron-right"></i></a>
+          </div>
+        </div>
+        <aside class="content-sidebar">
+          <div class="cat-sidebar-nav">
+            <div class="cat-sidebar-nav-header"><i class="fa-solid fa-table-list"></i> 新聞分類</div>
+            <ul class="cat-sidebar-nav-list">
+              <li class="cat-sidebar-nav-item"><a href="society.html"><i class="fa-solid fa-people-group"></i>社會</a></li>
+              <li class="cat-sidebar-nav-item"><a href="international.html"><i class="fa-solid fa-earth-asia"></i>國際</a></li>
+              <li class="cat-sidebar-nav-item current"><a href="tech.html"><i class="fa-solid fa-microchip"></i>科技</a></li>
+              <li class="cat-sidebar-nav-item"><a href="entertainment.html"><i class="fa-solid fa-star"></i>娛樂</a></li>
+              <li class="cat-sidebar-nav-item"><a href="sports.html"><i class="fa-solid fa-trophy"></i>體育</a></li>
+              <li class="cat-sidebar-nav-item"><a href="life.html"><i class="fa-solid fa-leaf"></i>生活</a></li>
+            </ul>
+          </div>
+          <div class="sidebar-widget">
+            <div class="widget-header"><i class="fa-solid fa-fire-flame-curved"></i> 熱門新聞</div>
+            <ul class="hot-list">
+              <li class="hot-item"><span class="hot-rank">01</span><a href="#">暫無新聞</a></li>
+              <li class="hot-item"><span class="hot-rank">02</span><a href="#">暫無新聞</a></li>
+              <li class="hot-item"><span class="hot-rank">03</span><a href="#">暫無新聞</a></li>
+              <li class="hot-item"><span class="hot-rank">04</span><a href="#">暫無新聞</a></li>
+              <li class="hot-item"><span class="hot-rank">05</span><a href="#">暫無新聞</a></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-top container">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <a href="../index.html" class="logo-img-wrap">
+            <img src="../image/logo.png" alt="TNC NEWS" class="logo-img logo-img--sm" />
+          </a>
+        </div>
+        <p class="footer-desc">Taiwan Network Center — 致力提供公正、客觀、即時的新聞資訊，守護媒體自由與新聞良知。</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="X/Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" aria-label="LINE"><i class="fa-brands fa-line"></i></a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col"><h4>新聞分類</h4><ul><li><a href="society.html">社會</a></li><li><a href="international.html">國際</a></li><li><a href="tech.html">科技</a></li><li><a href="life.html">生活</a></li></ul></div>
+        <div class="footer-col"><h4>更多頻道</h4><ul><li><a href="entertainment.html">娛樂</a></li><li><a href="sports.html">體育</a></li></ul></div>
+<div class="footer-col"><h4>關於我們</h4><ul><li><a href="about.html">媒體簡介</a></li><li><a href="editorial.html">編輯政策</a></li><li><a href="contact.html">聯絡我們</a></li><li><a href="advertise.html">廣告合作</a></li></ul></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <p>&copy; 2026 TNC NEWS 台灣網路觀察新聞網 Taiwan Network Center. All Rights Reserved.</p>
+        <div class="footer-bottom-links"><a href="#">隱私政策</a><a href="#">服務條款</a><a href="#">著作權聲明</a></div>
+      </div>
+    </div>
+  </footer>
+  <button class="back-to-top" id="back-to-top" aria-label="回到頂部"><i class="fa-solid fa-chevron-up"></i></button>
+</div>
+<script src="../js/main.js"></script>
+</body>
+</html>
