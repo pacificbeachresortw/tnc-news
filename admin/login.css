@@ -46,7 +46,7 @@
   letter-spacing: 0.05em;
 }
 
-.login-logo-text span { color: var(--accent); }
+.login-logo-text span { color: var(--text-primary); }
 
 .login-subtitle {
   text-align: center;
@@ -87,7 +87,7 @@
   transition: border-color 0.2s ease, background 0.2s ease;
 }
 
-.login-input:focus { border-color: var(--accent); background: var(--bg-4); }
+.login-input:focus { border-color: var(--border-light); background: var(--bg-4); }
 
 .login-input-icon {
   position: absolute;
@@ -104,12 +104,12 @@
 
 .login-error {
   display: none;
-  background: var(--accent-dim);
-  border: 1px solid rgba(230,57,70,0.3);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
   font-size: 0.82rem;
-  color: var(--accent);
+  color: var(--text-secondary);
   margin-bottom: 16px;
   align-items: center;
   gap: 8px;
@@ -120,10 +120,10 @@
 .login-btn {
   width: 100%;
   padding: 11px;
-  background: var(--accent);
+  background: #e0e0e0;
   border: none;
   border-radius: var(--radius-sm);
-  color: #fff;
+  color: #111;
   font-family: inherit;
   font-size: 0.9rem;
   font-weight: 600;
@@ -136,7 +136,7 @@
   margin-top: 8px;
 }
 
-.login-btn:hover { background: var(--accent-hover); }
+.login-btn:hover { background: #ffffff; color: #000; }
 .login-btn:active { transform: scale(0.98); }
 .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
@@ -164,7 +164,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: var(--blue);
+  color: var(--text-muted);
   font-size: 0.78rem;
   cursor: pointer;
   margin-top: 14px;
