@@ -24,7 +24,6 @@ function setDefaultDate() {
   if (d && !d.value) d.value = new Date().toISOString().slice(0, 10);
 }
 
-/* API KEYS */
 function loadApiKeys() {
   try {
     const saved = JSON.parse(localStorage.getItem('tnc_admin_keys') || '{}');
@@ -40,7 +39,7 @@ function saveApiKeys() {
   state.apiKeys.jsonbinBinId = $('api-bin-id').value.trim();
   state.apiKeys.imgbbKey = $('api-imgbb-key').value.trim();
   localStorage.setItem('tnc_admin_keys', JSON.stringify(state.apiKeys));
-  toast('API 設定已儲存', 'success');
+  toast('API \u8A2D\u5B9A\u5DF2\u5132\u5B58', 'success');
   fetchNews();
 }
 
@@ -49,11 +48,10 @@ function toggleApiPanel() {
   panel.classList.toggle('open');
   const btn = $('btn-api-toggle');
   btn.innerHTML = panel.classList.contains('open')
-    ? '<i class="fa-solid fa-gear"></i> 隱藏設定'
-    : '<i class="fa-solid fa-gear"></i> API 設定';
+    ? '<i class="fa-solid fa-gear"></i> \u96B1\u85CF\u8A2D\u5B9A'
+    : '<i class="fa-solid fa-gear"></i> API \u8A2D\u5B9A';
 }
 
-/* EVENTS */
 function bindEvents() {
   $('btn-api-toggle').addEventListener('click', toggleApiPanel);
   $('btn-api-save').addEventListener('click', saveApiKeys);
@@ -89,10 +87,8 @@ function bindEvents() {
   $('modal-confirm').addEventListener('click', confirmDelete);
 }
 
-/* LIVE PREVIEW */
 function bindFormLivePreview() {
-  var ids = ['f-title','f-category','f-excerpt','f-content','f-author','f-date'];
-  ids.forEach(function(id) {
+  ['f-title','f-category','f-excerpt','f-content','f-author','f-date'].forEach(function(id) {
     var el = $(id);
     if (el) el.addEventListener('input', updatePreview);
   });
@@ -119,27 +115,34 @@ function updatePreview() {
   if (!pc) return;
 
   if (!title && !content) {
-    pc.innerHTML = '<div class="preview-empty"><i class="fa-regular fa-newspaper"></i><p>開始輸入以預覽文章效果</p></div>';
+    pc.innerHTML = '<div class="preview-empty"><i class="fa-regular fa-newspaper"></i><p>\u958B\u59CB\u8F38\u5165\u4EE5\u9810\u89BD\u6587\u7AE0\u6548\u679C</p></div>';
     return;
   }
 
-  var catColors = { '社會':'#e63946','國際':'#4a9eff','科技':'#a55eea','娛樂':'#ff6b9d','體育':'#2ed573','生活':'#ffa502' };
+  var catColors = {
+    '\u793E\u6703':'#e63946',
+    '\u570B\u969B':'#4a9eff',
+    '\u79D1\u6280':'#a55eea',
+    '\u5A1B\u6A02':'#ff6b9d',
+    '\u9AD4\u80B2':'#2ed573',
+    '\u751F\u6D3B':'#ffa502'
+  };
   var cc = catColors[category] || '#e63946';
 
   var coverHtml = state.imageUrl
     ? '<div class="ap-cover"><img src="' + state.imageUrl + '" alt="cover" /></div>'
-    : '<div class="ap-cover"><div class="ap-cover-empty"><i class="fa-regular fa-image"></i><span style="font-size:0.8rem">尚未設定封面圖</span></div></div>';
+    : '<div class="ap-cover"><div class="ap-cover-empty"><i class="fa-regular fa-image"></i><span style="font-size:0.8rem">\u5C1A\u672A\u8A2D\u5B9A\u5C01\u9762\u5716</span></div></div>';
 
   var contentHtml = content
     ? content.split('\n').filter(function(l){ return l.trim(); }).map(function(l){ return '<p>' + esc(l) + '</p>'; }).join('')
     : '';
 
   pc.innerHTML = '<div class="preview-wrap">'
-    + '<div class="ap-category" style="background:' + cc + '22;color:' + cc + ';border-color:' + cc + '44"><i class="fa-solid fa-tag"></i>' + (category || '分類') + '</div>'
-    + '<h1 class="ap-title">' + (esc(title) || '文章標題') + '</h1>'
+    + '<div class="ap-category" style="background:' + cc + '22;color:' + cc + ';border-color:' + cc + '44"><i class="fa-solid fa-tag"></i>' + (category || '\u5206\u985E') + '</div>'
+    + '<h1 class="ap-title">' + (esc(title) || '\u6587\u7AE0\u6A19\u984C') + '</h1>'
     + '<div class="ap-meta">'
-    + '<div class="ap-meta-item"><i class="fa-regular fa-user"></i>' + (esc(author) || '作者') + '</div>'
-    + '<div class="ap-meta-item"><i class="fa-regular fa-calendar"></i>' + (date || '日期') + '</div>'
+    + '<div class="ap-meta-item"><i class="fa-regular fa-user"></i>' + (esc(author) || '\u4F5C\u8005') + '</div>'
+    + '<div class="ap-meta-item"><i class="fa-regular fa-calendar"></i>' + (date || '\u65E5\u671F') + '</div>'
     + '</div><div class="ap-divider"></div>'
     + coverHtml
     + (excerpt ? '<div class="ap-excerpt">' + esc(excerpt) + '</div>' : '')
@@ -148,23 +151,25 @@ function updatePreview() {
 }
 
 function esc(str) {
-  return String(str).replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"');
+  return String(str)
+    .replace(/&/g, '&')
+    .replace(/</g, '<')
+    .replace(/>/g, '>')
+    .replace(/"/g, '"');
 }
 
-/* TABS */
 function switchTab(tab) {
   document.querySelectorAll('.preview-tab').forEach(function(t) { t.classList.toggle('active', t.dataset.tab === tab); });
   document.querySelectorAll('.preview-tab-content').forEach(function(c) { c.classList.toggle('active', c.dataset.tab === tab); });
 }
 
-/* IMAGE */
 function handleFileSelect(e) {
   var file = e.target.files[0];
   if (file) uploadImage(file);
 }
 
 function uploadImage(file) {
-  if (!state.apiKeys.imgbbKey) { toast('請先設定 imgbb API Key', 'error'); return; }
+  if (!state.apiKeys.imgbbKey) { toast('\u8ACB\u5148\u8A2D\u5B9A imgbb API Key', 'error'); return; }
   var progress = $('upload-progress');
   progress.classList.add('show');
   var fd = new FormData();
@@ -175,18 +180,18 @@ function uploadImage(file) {
       if (data.success) {
         setImage(data.data.url);
         $('img-url-input').value = data.data.url;
-        toast('圖片上傳成功', 'success');
+        toast('\u5716\u7247\u4E0A\u50B3\u6210\u529F', 'success');
       } else {
-        throw new Error((data.error && data.error.message) || '上傳失敗');
+        throw new Error((data.error && data.error.message) || '\u4E0A\u50B3\u5931\u6557');
       }
     })
-    .catch(function(err) { toast('圖片上傳失敗：' + err.message, 'error'); })
+    .catch(function(err) { toast('\u5716\u7247\u4E0A\u50B3\u5931\u6557\uFF1A' + err.message, 'error'); })
     .finally(function() { progress.classList.remove('show'); });
 }
 
 function applyImageUrl() {
   var url = $('img-url-input').value.trim();
-  if (url) { setImage(url); toast('圖片 URL 已套用', 'info'); }
+  if (url) { setImage(url); toast('\u5716\u7247 URL \u5DF2\u5957\u7528', 'info'); }
 }
 
 function setImage(url) {
@@ -205,7 +210,6 @@ function clearImage() {
   updatePreview();
 }
 
-/* JSONBIN */
 function fetchNews() {
   var key = state.apiKeys.jsonbinKey, bid = state.apiKeys.jsonbinBinId;
   if (!key || !bid) { setStatus('disconnected'); renderList(); return; }
@@ -221,13 +225,13 @@ function fetchNews() {
       renderList();
       updatePreview();
     })
-    .catch(function(err) { setStatus('error'); toast('載入失敗：' + err.message, 'error'); })
+    .catch(function(err) { setStatus('error'); toast('\u8F09\u5165\u5931\u6557\uFF1A' + err.message, 'error'); })
     .finally(function() { showLoading(false); });
 }
 
 function saveToJsonbin() {
   var key = state.apiKeys.jsonbinKey, bid = state.apiKeys.jsonbinBinId;
-  if (!key || !bid) return Promise.reject(new Error('請先設定 jsonbin API Key 與 Bin ID'));
+  if (!key || !bid) return Promise.reject(new Error('\u8ACB\u5148\u8A2D\u5B9A jsonbin API Key \u8207 Bin ID'));
   return fetch('https://api.jsonbin.io/v3/b/' + bid, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', 'X-Master-Key': key },
@@ -240,23 +244,22 @@ function saveToJsonbin() {
 
 function testConnection() {
   var key = state.apiKeys.jsonbinKey, bid = state.apiKeys.jsonbinBinId;
-  if (!key || !bid) { toast('請填寫 jsonbin API Key 與 Bin ID', 'warning'); return; }
+  if (!key || !bid) { toast('\u8ACB\u586B\u5BEB jsonbin API Key \u8207 Bin ID', 'warning'); return; }
   $('btn-api-test').disabled = true;
   fetch('https://api.jsonbin.io/v3/b/' + bid + '/latest', { headers: { 'X-Master-Key': key } })
     .then(function(r) {
-      if (r.ok) { toast('連線成功！', 'success'); setStatus('connected'); }
+      if (r.ok) { toast('\u9023\u7DDA\u6210\u529F\uFF01', 'success'); setStatus('connected'); }
       else throw new Error('HTTP ' + r.status);
     })
-    .catch(function(err) { toast('連線失敗：' + err.message, 'error'); setStatus('error'); })
+    .catch(function(err) { toast('\u9023\u7DDA\u5931\u6557\uFF1A' + err.message, 'error'); setStatus('error'); })
     .finally(function() { $('btn-api-test').disabled = false; });
 }
 
-/* SAVE NEWS */
 function saveNews() {
   var title = $('f-title').value.trim();
   var content = $('f-content').value.trim();
-  if (!title) { toast('請輸入新聞標題', 'warning'); $('f-title').focus(); return; }
-  if (!content) { toast('請輸入新聞內文', 'warning'); $('f-content').focus(); return; }
+  if (!title) { toast('\u8ACB\u8F38\u5165\u65B0\u805E\u6A19\u984C', 'warning'); $('f-title').focus(); return; }
+  if (!content) { toast('\u8ACB\u8F38\u5165\u65B0\u805E\u5167\u6587', 'warning'); $('f-content').focus(); return; }
 
   var article = {
     id: state.editingId || Date.now().toString(),
@@ -264,7 +267,7 @@ function saveNews() {
     category: $('f-category').value,
     excerpt: $('f-excerpt').value.trim(),
     content: content,
-    author: $('f-author').value.trim() || 'TNC 編輯',
+    author: $('f-author').value.trim() || 'TNC \u7DE8\u8F2F',
     date: $('f-date').value || new Date().toISOString().slice(0, 10),
     image: state.imageUrl,
     published: $('f-published').checked
@@ -281,20 +284,19 @@ function saveNews() {
   var isEdit = !!state.editingId;
   saveToJsonbin()
     .then(function() {
-      toast(isEdit ? '新聞已更新' : '新聞已新增', 'success');
+      toast(isEdit ? '\u65B0\u805E\u5DF2\u66F4\u65B0' : '\u65B0\u805E\u5DF2\u65B0\u589E', 'success');
       resetForm();
       renderList();
     })
-    .catch(function(err) { toast('儲存失敗：' + err.message, 'error'); })
+    .catch(function(err) { toast('\u5132\u5B58\u5931\u6557\uFF1A' + err.message, 'error'); })
     .finally(function() { $('btn-save').disabled = false; });
 }
 
-/* RESET */
 function resetForm() {
   state.editingId = null;
   state.imageUrl = '';
   $('f-title').value = '';
-  $('f-category').value = '社會';
+  $('f-category').value = '\u793E\u6703';
   $('f-excerpt').value = '';
   $('f-content').value = '';
   $('f-author').value = '';
@@ -302,19 +304,18 @@ function resetForm() {
   setDefaultDate();
   clearImage();
   $('edit-mode-badge').classList.remove('show');
-  $('btn-save').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> 儲存新聞';
+  $('btn-save').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> \u5132\u5B58\u65B0\u805E';
   $('btn-save').className = 'btn btn-primary';
-  $('panel-form-title').textContent = '新增新聞';
+  $('panel-form-title').textContent = '\u65B0\u589E\u65B0\u805E';
   updateCharCount();
   updatePreview();
   document.querySelectorAll('.news-item').forEach(function(el) { el.classList.remove('active'); });
 }
 
-/* EDIT */
 function loadForEdit(article) {
   state.editingId = article.id;
   $('f-title').value = article.title || '';
-  $('f-category').value = article.category || '社會';
+  $('f-category').value = article.category || '\u793E\u6703';
   $('f-excerpt').value = article.excerpt || '';
   $('f-content').value = article.content || '';
   $('f-author').value = article.author || '';
@@ -323,9 +324,9 @@ function loadForEdit(article) {
   if (article.image) { setImage(article.image); $('img-url-input').value = article.image; }
   else { clearImage(); }
   $('edit-mode-badge').classList.add('show');
-  $('btn-save').innerHTML = '<i class="fa-solid fa-pen"></i> 更新新聞';
+  $('btn-save').innerHTML = '<i class="fa-solid fa-pen"></i> \u66F4\u65B0\u65B0\u805E';
   $('btn-save').className = 'btn btn-blue';
-  $('panel-form-title').textContent = '編輯新聞';
+  $('panel-form-title').textContent = '\u7DE8\u8F2F\u65B0\u805E';
   updateCharCount();
   updatePreview();
   switchTab('preview');
@@ -334,11 +335,10 @@ function loadForEdit(article) {
   if (activeItem) activeItem.classList.add('active');
 }
 
-/* DELETE */
 function deleteNews(id) {
   pendingDeleteId = id;
   var article = state.news.find(function(n) { return n.id === id; });
-  $('modal-body-text').textContent = '確定要刪除「' + ((article && article.title) || '此新聞') + '」嗎？此操作無法復原。';
+  $('modal-body-text').textContent = '\u78BA\u5B9A\u8981\u522A\u9664\u300C' + ((article && article.title) || '\u6B64\u65B0\u805E') + '\u300D\u55CE\uFF1F\u6B64\u64CD\u4F5C\u7121\u6CD5\u5FA9\u539F\u3002';
   openModal();
 }
 
@@ -349,18 +349,17 @@ function confirmDelete() {
   closeModal();
   saveToJsonbin()
     .then(function() {
-      toast('新聞已刪除', 'success');
+      toast('\u65B0\u805E\u5DF2\u522A\u9664', 'success');
       if (state.editingId === delId) resetForm();
       renderList();
     })
     .catch(function(err) {
-      toast('刪除失敗：' + err.message, 'error');
+      toast('\u522A\u9664\u5931\u6557\uFF1A' + err.message, 'error');
       fetchNews();
     });
   pendingDeleteId = null;
 }
 
-/* RENDER LIST */
 function renderList() {
   var q = ($('list-search-input') ? $('list-search-input').value : '').toLowerCase();
   var cat = $('list-filter') ? $('list-filter').value : '';
@@ -370,10 +369,10 @@ function renderList() {
 
   var listEl = $('news-list');
   var countEl = $('list-count');
-  if (countEl) countEl.textContent = '共 ' + items.length + ' 篇';
+  if (countEl) countEl.textContent = '\u5171 ' + items.length + ' \u7BC7';
 
   if (!items.length) {
-    listEl.innerHTML = '<div class="news-list-empty"><i class="fa-regular fa-newspaper"></i><p>' + (state.news.length ? '沒有符合條件的新聞' : '尚無新聞，點擊左側新增') + '</p></div>';
+    listEl.innerHTML = '<div class="news-list-empty"><i class="fa-regular fa-newspaper"></i><p>' + (state.news.length ? '\u6C92\u6709\u7B26\u5408\u689D\u4EF6\u7684\u65B0\u805E' : '\u5C1A\u7121\u65B0\u805E\uFF0C\u9EDE\u64CA\u5DE6\u5074\u65B0\u589E') + '</p></div>';
     return;
   }
 
@@ -381,8 +380,8 @@ function renderList() {
     var isActive = n.id === state.editingId;
     var thumbHtml = n.image ? '<img src="' + n.image + '" alt="" />' : '<i class="fa-regular fa-image"></i>';
     var statusHtml = n.published !== false
-      ? '<span class="news-item-status pub">已發布</span>'
-      : '<span class="news-item-status draft">草稿</span>';
+      ? '<span class="news-item-status pub">\u5DF2\u767C\u5E03</span>'
+      : '<span class="news-item-status draft">\u8349\u7A3F</span>';
     return '<div class="news-item' + (isActive ? ' active' : '') + '" data-id="' + n.id + '" onclick="handleItemClick(\'' + n.id + '\')">'
       + '<div class="news-item-thumb">' + thumbHtml + '</div>'
       + '<div class="news-item-body">'
@@ -393,8 +392,8 @@ function renderList() {
       + statusHtml
       + '</div></div>'
       + '<div class="news-item-actions">'
-      + '<button class="news-item-btn" title="編輯" onclick="event.stopPropagation();loadForEdit(state.news.find(function(x){return x.id===\'' + n.id + '\';}))"><i class="fa-solid fa-pen"></i></button>'
-      + '<button class="news-item-btn del" title="刪除" onclick="event.stopPropagation();deleteNews(\'' + n.id + '\')"><i class="fa-solid fa-trash"></i></button>'
+      + '<button class="news-item-btn" title="\u7DE8\u8F2F" onclick="event.stopPropagation();loadForEdit(state.news.find(function(x){return x.id===\'' + n.id + '\';}))"><i class="fa-solid fa-pen"></i></button>'
+      + '<button class="news-item-btn del" title="\u522A\u9664" onclick="event.stopPropagation();deleteNews(\'' + n.id + '\')"><i class="fa-solid fa-trash"></i></button>'
       + '</div></div>';
   }).join('');
 }
@@ -404,11 +403,9 @@ function handleItemClick(id) {
   if (article) loadForEdit(article);
 }
 
-/* MODAL */
 function openModal() { $('modal-overlay').classList.add('open'); }
 function closeModal() { $('modal-overlay').classList.remove('open'); pendingDeleteId = null; }
 
-/* TOAST */
 function toast(msg, type) {
   type = type || 'info';
   var icons = { success:'fa-circle-check', error:'fa-circle-xmark', info:'fa-circle-info', warning:'fa-triangle-exclamation' };
@@ -423,12 +420,10 @@ function toast(msg, type) {
   }, 3000);
 }
 
-/* STATUS */
 function setStatus(s) {
   var dot = $('status-dot'), txt = $('status-text');
   dot.className = 'status-dot' + (s === 'connected' ? ' connected' : s === 'error' ? ' error' : '');
-  txt.textContent = s === 'connected' ? '已連線' : s === 'error' ? '連線失敗' : '未連線';
+  txt.textContent = s === 'connected' ? '\u5DF2\u9023\u7DDA' : s === 'error' ? '\u9023\u7DDA\u5931\u6557' : '\u672A\u9023\u7DDA';
 }
 
-/* LOADING */
 function showLoading(show) { $('loading-overlay').classList.toggle('show', show); }
