@@ -5,7 +5,7 @@ const state = {
   news: [],
   editingId: null,
   imageUrl: '',
-  apiKeys: { jsonbinKey: '', jsonbinBinId: '', imgbbKey: '' }
+  apiKeys: { jsonbinKey: '', jsonbinBinId: '', imgbbKey: '', githubToken: '', githubRepo: '', siteUrl: '' }
 };
 let pendingDeleteId = null;
 
@@ -50,6 +50,9 @@ function loadApiKeys() {
     if ($('api-jsonbin-key')) $('api-jsonbin-key').value = state.apiKeys.jsonbinKey;
     if ($('api-bin-id')) $('api-bin-id').value = state.apiKeys.jsonbinBinId;
     if ($('api-imgbb-key')) $('api-imgbb-key').value = state.apiKeys.imgbbKey;
+    if ($('api-github-token')) $('api-github-token').value = state.apiKeys.githubToken;
+    if ($('api-github-repo')) $('api-github-repo').value = state.apiKeys.githubRepo;
+    if ($('api-site-url')) $('api-site-url').value = state.apiKeys.siteUrl;
   } catch (e) {}
 }
 
@@ -57,6 +60,9 @@ function saveApiKeys() {
   state.apiKeys.jsonbinKey = $('api-jsonbin-key').value.trim();
   state.apiKeys.jsonbinBinId = $('api-bin-id').value.trim();
   state.apiKeys.imgbbKey = $('api-imgbb-key').value.trim();
+  state.apiKeys.githubToken = $('api-github-token') ? $('api-github-token').value.trim() : '';
+  state.apiKeys.githubRepo = $('api-github-repo') ? $('api-github-repo').value.trim() : '';
+  state.apiKeys.siteUrl = $('api-site-url') ? $('api-site-url').value.trim().replace(/\/$/, '') : '';
   localStorage.setItem('tnc_admin_keys', JSON.stringify(state.apiKeys));
   toast('API \u8A2D\u5B9A\u5DF2\u5132\u5B58', 'success');
   fetchNews();
@@ -401,11 +407,133 @@ function saveNews() {
   saveToJsonbin()
     .then(function() {
       toast(isEdit ? '\u65B0\u805E\u5DF2\u66F4\u65B0' : '\u65B0\u805E\u5DF2\u65B0\u589E', 'success');
+      publishArticlePage(article);
       resetForm();
       renderList();
     })
     .catch(function(err) { toast('\u5132\u5B58\u5931\u6557\uFF1A' + err.message, 'error'); })
     .finally(function() { $('btn-save').disabled = false; });
+}
+
+/* GITHUB - publish static article page */
+function buildArticleHtml(article) {
+  var siteUrl = (state.apiKeys.siteUrl || '').replace(/\/$/, '');
+  var pageUrl = siteUrl + '/pages/news/' + article.id + '.html';
+  var fmtD = formatDateTime(article.date);
+
+  function he(s) { return String(s||'').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"'); }
+
+  var bodyParagraphs = (article.content || '').split('\n').filter(function(l){return l.trim();}).map(function(l){return '<p>'+he(l)+'</p>';}).join('');
+
+  var creditLine = '';
+  if (article.imageSource || article.imagePhotographer) {
+    creditLine = '<p style="font-size:0.75rem;color:#666;margin-top:6px;margin-bottom:24px">';
+    if (article.imageSource) creditLine += '&#169; ' + he(article.imageSource) + ' ';
+    if (article.imagePhotographer) creditLine += '/ ' + he(article.imagePhotographer);
+    creditLine += '</p>';
+  }
+
+  var extraImgHtml = '';
+  if (article.extraImages && article.extraImages.length) {
+    extraImgHtml = article.extraImages.filter(function(i){return i.url;}).map(function(img){
+      var cr = '';
+      if (img.source || img.photographer) {
+        cr = '<p style="font-size:0.75rem;color:#666;margin-top:4px;margin-bottom:20px">';
+        if (img.source) cr += '&#169; ' + he(img.source) + ' ';
+        if (img.photographer) cr += '/ ' + he(img.photographer);
+        cr += '</p>';
+      }
+      return '<figure style="margin:28px 0 0"><img src="'+he(img.url)+'" alt="" style="width:100%;border-radius:10px;display:block" />'+cr+'</figure>';
+    }).join('');
+  }
+
+  var catMap = {'\u5373\u6642':'society','\u793E\u6703':'society','\u570B\u969B':'international','\u79D1\u6280':'tech','\u5A1B\u6A02':'entertainment','\u9AD4\u80B2':'sports','\u751F\u6D3B':'life'};
+  var catSlug = catMap[article.category] || 'society';
+
+  return '<!DOCTYPE html>\n<html lang="zh-TW">\n<head>\n'
+    + '<meta charset="UTF-8" />\n'
+    + '<meta name="viewport" content="width=device-width, initial-scale=1.0" />\n'
+    + '<title>' + he(article.title) + ' \u2014 TNC NEWS</title>\n'
+    + '<meta name="description" content="' + he(article.excerpt || article.title) + '" />\n'
+    + '<meta property="og:type" content="article" />\n'
+    + '<meta property="og:site_name" content="TNC NEWS \u53F0\u7063\u7DB2\u8DEF\u89C0\u5BDF\u65B0\u805E\u7DB2" />\n'
+    + '<meta property="og:title" content="' + he(article.title) + '" />\n'
+    + '<meta property="og:description" content="' + he(article.excerpt || article.title) + '" />\n'
+    + (article.image ? '<meta property="og:image" content="' + he(article.image) + '" />\n' : '')
+    + '<meta property="og:url" content="' + he(pageUrl) + '" />\n'
+    + '<meta name="twitter:card" content="summary_large_image" />\n'
+    + '<meta name="twitter:title" content="' + he(article.title) + '" />\n'
+    + '<meta name="twitter:description" content="' + he(article.excerpt || article.title) + '" />\n'
+    + (article.image ? '<meta name="twitter:image" content="' + he(article.image) + '" />\n' : '')
+    + '<link rel="icon" href="../../image/weblogo.png" type="image/png" />\n'
+    + '<link rel="stylesheet" href="../../css/animations.css" />\n'
+    + '<link rel="stylesheet" href="../../css/style.css" />\n'
+    + '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />\n'
+    + '<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />\n'
+    + '<style>body{background:#0d0d0d;color:#ddd}.ap{max-width:820px;margin:0 auto;padding:32px 20px 60px}.ap-cat{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);color:#ccc;border:1px solid rgba(255,255,255,.12);padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;letter-spacing:.05em;margin-bottom:18px;text-decoration:none}.ap-h1{font-size:2rem;font-weight:800;line-height:1.3;color:#f0f0f0;margin-bottom:12px;font-family:"Noto Sans TC",sans-serif}.ap-ex{font-size:1.05rem;color:#999;line-height:1.7;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #222;font-style:italic}.ap-meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:28px;font-size:.82rem;color:#666}.ap-cover{width:100%;border-radius:12px;overflow:hidden;margin-bottom:8px;max-height:480px}.ap-cover img{width:100%;object-fit:cover;display:block}.ap-body{font-size:1rem;color:#ddd;line-height:1.9}.ap-body p{margin-bottom:18px}.ap-div{height:1px;background:#222;margin:32px 0}.share-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.share-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;border:1px solid #333;background:transparent;color:#999;font-size:.82rem;text-decoration:none;transition:all .2s}.share-btn:hover{background:#1e1e1e;color:#f0f0f0;border-color:#555}</style>\n'
+    + '</head>\n<body>\n'
+    + '<header class="site-header" style="position:sticky;top:0;z-index:100">\n'
+    + '<div class="header-inner container" style="padding:14px 20px">\n'
+    + '<div class="header-logo"><a href="../../index.html" class="logo-img-wrap"><img src="../../image/logo.png" alt="TNC NEWS" class="logo-img" /></a></div>\n'
+    + '<nav class="main-nav"><ul>'
+    + '<li><a href="../../index.html"><i class="fa-solid fa-house nav-icon"></i>\u9996\u9801</a></li>'
+    + '<li><a href="../society.html">\u793E\u6703</a></li>'
+    + '<li><a href="../international.html">\u570B\u969B</a></li>'
+    + '<li><a href="../tech.html">\u79D1\u6280</a></li>'
+    + '<li><a href="../entertainment.html">\u5A1B\u6A02</a></li>'
+    + '<li><a href="../sports.html">\u9AD4\u80B2</a></li>'
+    + '<li><a href="../life.html">\u751F\u6D3B</a></li>'
+    + '</ul></nav>'
+    + '<div class="header-actions"><button class="hamburger" id="hamburger" aria-label="\u9078\u55AE"><span></span><span></span><span></span></button></div>\n'
+    + '</div></header>\n'
+    + '<main style="min-height:80vh">\n<div class="ap">\n'
+    + '<a href="../../index.html" style="display:inline-flex;align-items:center;gap:8px;color:#888;font-size:.85rem;text-decoration:none;margin-bottom:24px"><i class="fa-solid fa-arrow-left"></i> \u56DE\u9996\u9801</a>\n'
+    + '<a href="../' + catSlug + '.html" class="ap-cat"><i class="fa-solid fa-tag"></i>' + he(article.category) + '</a>\n'
+    + '<h1 class="ap-h1">' + he(article.title) + '</h1>\n'
+    + (article.excerpt ? '<p class="ap-ex">' + he(article.excerpt) + '</p>\n' : '')
+    + '<div class="ap-meta"><span><i class="fa-regular fa-user"></i> ' + he(article.author || 'TNC\u7DE8\u8F2F') + '</span><span><i class="fa-regular fa-clock"></i> ' + fmtD + '</span></div>\n'
+    + (article.image ? '<div class="ap-cover"><img src="' + he(article.image) + '" alt="' + he(article.title) + '" /></div>\n' + creditLine : '')
+    + '<div class="ap-body">' + bodyParagraphs + '</div>\n'
+    + extraImgHtml
+    + '<div class="ap-div"></div>\n'
+    + '<div class="share-bar" style="margin-top:0">\n'
+    + '<span style="font-size:.82rem;color:#666"><i class="fa-solid fa-share-nodes"></i> \u5206\u4EAB\uFF1A</span>\n'
+    + '<a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(pageUrl) + '" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> Facebook</a>\n'
+    + '<a class="share-btn" href="https://line.me/R/msg/text/?' + encodeURIComponent(article.title) + '%0D%0A' + encodeURIComponent(pageUrl) + '" target="_blank" rel="noopener"><i class="fa-brands fa-line"></i> LINE</a>\n'
+    + '</div>\n</div></main>\n'
+    + '<footer class="site-footer"><div class="footer-bottom"><div class="container footer-bottom-inner">'
+    + '<p>&copy; 2026 TNC NEWS \u53F0\u7063\u7DB2\u8DEF\u89C0\u5BDF\u65B0\u805E\u7DB2. All Rights Reserved.</p>'
+    + '</div></div></footer>\n'
+    + '<script src="../../js/main.js"><\/script>\n'
+    + '</body>\n</html>';
+}
+
+function publishArticlePage(article) {
+  var token = state.apiKeys.githubToken;
+  var repo = state.apiKeys.githubRepo;
+  if (!token || !repo) return;
+
+  var path = 'pages/news/' + article.id + '.html';
+  var content = buildArticleHtml(article);
+  var encoded = btoa(unescape(encodeURIComponent(content)));
+  var apiUrl = 'https://api.github.com/repos/' + repo + '/contents/' + path;
+
+  fetch(apiUrl, { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(existing) {
+      var body = { message: 'publish: ' + article.title, content: encoded };
+      if (existing && existing.sha) body.sha = existing.sha;
+      return fetch(apiUrl, {
+        method: 'PUT',
+        headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
+        body: JSON.stringify(body)
+      });
+    })
+    .then(function(r){
+      if (r && r.ok) toast('\u9801\u9762\u5DF2\u767C\u5E03\u5230 GitHub', 'success');
+      else toast('GitHub \u767C\u5E03\u5931\u6557\uFF08\u8ACB\u6AA2\u67E5 Token \u6B0A\u9650\uFF09', 'warning');
+    })
+    .catch(function(){ toast('GitHub \u767C\u5E03\u5931\u6557', 'warning'); });
 }
 
 function resetForm() {
