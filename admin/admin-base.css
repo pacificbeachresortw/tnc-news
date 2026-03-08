@@ -34,7 +34,7 @@ body { font-family: 'Inter','Noto Sans TC',sans-serif; background: var(--bg-0); 
 .status-dot.connected { background: var(--green); box-shadow: 0 0 6px var(--green); }
 .status-dot.error { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
 .api-panel { background: var(--bg-1); border-bottom: 1px solid var(--border); overflow: hidden; max-height: 0; transition: max-height 0.35s ease; flex-shrink: 0; }
-.api-panel.open { max-height: 270px; }
+.api-panel.open { max-height: 400px; }
 .api-panel-inner { padding: 18px 24px; }
 .api-panel-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
 .api-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
