@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>聯絡我們 — TNC NEWS｜台灣網路觀察新聞網</title>
+  <title>聯絡我們｜TNC NEWS台灣網路觀察新聞網</title>
   <link rel="icon" href="../image/weblogo.png" type="image/png" />
   <link rel="stylesheet" href="../css/animations.css" />
   <link rel="stylesheet" href="../css/style.css" />
@@ -80,8 +80,8 @@
       </div>
       <div class="about-hero-label"><i class="fa-solid fa-envelope"></i> CONTACT US</div>
       <h1 class="about-hero-title">聯絡我們</h1>
-      <p class="about-hero-en">Contact Us — TNC NEWS</p>
-      <p class="about-hero-desc">有任何問題、新聞線索或意見回饋，歡迎透過以下方式與 TNC NEWS 編輯台聯繫，我們將盡快回覆。</p>
+      <p class="about-hero-en">Contact Us ─ TNC NEWS</p>
+      <p class="about-hero-desc">無論您有新聞線索、意見回饋或合作提案，歡迎透過以下方式聯繫 TNC NEWS 編輯團隊，我們將盡快回覆。</p>
     </div>
   </div>
 
@@ -92,29 +92,29 @@
         <section class="about-section">
           <div class="about-section-header">
             <div class="about-section-icon"><i class="fa-solid fa-address-card"></i></div>
-            <div><h2 class="about-section-title">聯絡方式</h2><p class="about-section-sub">Get in Touch</p></div>
+            <div><h2 class="about-section-title">聯絡資訊</h2><p class="about-section-sub">Get in Touch</p></div>
           </div>
           <div class="about-section-body">
             <div class="about-mission-grid">
               <div class="about-mission-card">
                 <div class="about-mission-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
-                <h3>服務信箱</h3>
+                <h3>電子郵件</h3>
                 <p>service@taiwannc.com</p>
               </div>
               <div class="about-mission-card">
                 <div class="about-mission-icon"><i class="fa-brands fa-discord"></i></div>
-                <h3>官方 Discord 社群</h3>
+                <h3>加入 Discord 社群</h3>
                 <p>discord.gg/taiwannc</p>
               </div>
               <div class="about-mission-card">
                 <div class="about-mission-icon"><i class="fa-solid fa-pen-nib"></i></div>
                 <h3>新聞線索投遞</h3>
-                <p>透過下方表單或服務信箱提供線索</p>
+                <p>請填寫下方表單提交線索</p>
               </div>
               <div class="about-mission-card">
                 <div class="about-mission-icon"><i class="fa-solid fa-rotate-right"></i></div>
-                <h3>更正申請</h3>
-                <p>透過服務信箱提交更正申請</p>
+                <h3>回覆時間</h3>
+                <p>通常於信件發送後回覆</p>
               </div>
             </div>
           </div>
@@ -126,36 +126,39 @@
             <div><h2 class="about-section-title">新聞線索投遞</h2><p class="about-section-sub">Submit a News Tip</p></div>
           </div>
           <div class="about-section-body">
-            <p>您是否掌握重要的新聞線索？歡迎透過下方表單向我們提供資訊。TNC NEWS 承諾對所有線索來源保密，並依照新聞倫理謹慎處理。</p>
-            <form class="contact-form" onsubmit="return false;">
+            <p>若您掌握獨家線索或目擊事件，歡迎填寫下方表單提交至 TNC NEWS 編輯台，我們將對消息來源保密並認真跟進每一條有價值的線索。</p>
+            <form class="contact-form" id="contact-form">
               <div class="contact-form-row">
                 <div class="contact-form-group">
-                  <label><i class="fa-solid fa-user"></i> 您的稱呼</label>
-                  <input type="text" placeholder="請輸入您的姓名（可匿名）" />
+                  <label><i class="fa-solid fa-user"></i> 您的姓名</label>
+                  <input type="text" id="tip-name" placeholder="請輸入姓名（可匿名）" />
                 </div>
                 <div class="contact-form-group">
                   <label><i class="fa-solid fa-envelope"></i> 電子郵件</label>
-                  <input type="email" placeholder="請輸入您的 Email" />
+                  <input type="email" id="tip-email" placeholder="請輸入您的Email" />
                 </div>
               </div>
               <div class="contact-form-group">
                 <label><i class="fa-solid fa-tag"></i> 線索類型</label>
-                <select>
-                  <option value="">請選擇類型</option>
-                  <option>社會事件</option>
-                  <option>國際時事</option>
-                  <option>科技產業</option>
-                  <option>娛樂藝文</option>
-                  <option>體育賽事</option>
-                  <option>生活消費</option>
-                  <option>其他</option>
+                <select id="tip-category">
+                  <option value="">請選擇</option>
+                  <option value="社會新聞">社會新聞</option>
+                  <option value="國際事件">國際事件</option>
+                  <option value="科技資訊">科技資訊</option>
+                  <option value="娛樂八卦">娛樂八卦</option>
+                  <option value="體育賽事">體育賽事</option>
+                  <option value="生活資訊">生活資訊</option>
+                  <option value="其他">其他</option>
                 </select>
               </div>
               <div class="contact-form-group">
                 <label><i class="fa-solid fa-message"></i> 線索內容</label>
-                <textarea rows="5" placeholder="請詳述您的新聞線索，包括時間、地點、人物及事件經過…"></textarea>
+                <textarea id="tip-content" rows="5" placeholder="請詳細描述您的線索內容，包含時間、地點、事件經過等資訊…"></textarea>
               </div>
-              <button type="submit" class="contact-submit-btn"><i class="fa-solid fa-paper-plane"></i> 送出線索</button>
+              <div id="contact-msg" style="display:none;padding:10px 14px;border-radius:8px;font-size:0.88rem;margin-bottom:12px"></div>
+              <button type="submit" class="contact-submit-btn" id="contact-submit-btn">
+                <i class="fa-solid fa-paper-plane"></i> 送出線索
+              </button>
             </form>
           </div>
         </section>
@@ -166,19 +169,19 @@
             <div><h2 class="about-section-title">讀者回饋</h2><p class="about-section-sub">Reader Feedback</p></div>
           </div>
           <div class="about-section-body">
-            <p>您的意見是我們進步的動力。無論是報導內容的建議、網站使用體驗的回饋，或是對特定報導的更正申請，我們都重視每一位讀者的聲音。</p>
+            <p>如果您對我們的報導有任何意見或建議，歡迎透過電子郵件聯繫我們，或直接透過社群媒體與我們互動，您的意見是我們進步的動力。</p>
             <div class="about-values-list">
               <div class="about-value-item">
                 <div class="about-value-num"><i class="fa-solid fa-rotate-right"></i></div>
-                <div class="about-value-content"><h3>更正申請</h3><p>若您發現本網站有任何事實錯誤，請來信 service@taiwannc.com 並說明錯誤所在，我們將盡快審查並更正。</p></div>
+                <div class="about-value-content"><h3>回覆時間</h3><p>我們會在收到來信後盡快回覆，如有急需，請直接寄信至 service@taiwannc.com 並標明緊急事項。</p></div>
               </div>
               <div class="about-value-item">
                 <div class="about-value-num"><i class="fa-solid fa-star"></i></div>
-                <div class="about-value-content"><h3>內容建議</h3><p>歡迎提供您希望 TNC NEWS 報導的題材或領域，我們的編輯團隊將參考讀者需求規劃報導方向。</p></div>
+                <div class="about-value-content"><h3>意見建議</h3><p>您對我們有任何想法或建議，TNC NEWS 編輯台都樂於傾聽，並認真思考每一條有建設性的意見。</p></div>
               </div>
               <div class="about-value-item">
                 <div class="about-value-num"><i class="fa-solid fa-shield-halved"></i></div>
-                <div class="about-value-content"><h3>隱私問題</h3><p>若您對個人資料的使用方式有任何疑慮，請聯繫 service@taiwannc.com，我們將依法妥善處理。</p></div>
+                <div class="about-value-content"><h3>隱私保護</h3><p>您的個人資料及聯絡方式將受到嚴格保護，如需匿名投遞線索，請寄信至 service@taiwannc.com，我們承諾保護消息來源。</p></div>
               </div>
             </div>
           </div>
@@ -190,7 +193,7 @@
             <div><h2 class="about-section-title">社群媒體</h2><p class="about-section-sub">Social Media</p></div>
           </div>
           <div class="about-section-body">
-            <p>您也可以透過各大社群平台追蹤 TNC NEWS，獲得最即時的新聞推播，並與我們直接互動。</p>
+            <p>歡迎追蹤我們的社群媒體，即時掌握 TNC NEWS 最新動態，也歡迎在社群上與我們互動交流。</p>
             <div class="about-social-grid" style="margin-top:1.2rem;">
               <a href="#" class="about-social-btn"><i class="fa-brands fa-facebook-f"></i><span>Facebook</span></a>
               <a href="#" class="about-social-btn"><i class="fa-brands fa-x-twitter"></i><span>X / Twitter</span></a>
@@ -204,7 +207,7 @@
 
       <aside class="about-sidebar">
         <div class="about-sidebar-card">
-          <div class="about-sidebar-header"><i class="fa-solid fa-link"></i> 關於我們</div>
+          <div class="about-sidebar-header"><i class="fa-solid fa-link"></i> 相關頁面</div>
           <ul class="about-sidebar-links">
             <li><a href="about.html"><i class="fa-solid fa-circle-info"></i>媒體簡介</a></li>
             <li><a href="editorial.html"><i class="fa-solid fa-scroll"></i>編輯政策</a></li>
@@ -222,7 +225,7 @@
         </div>
 
         <div class="about-sidebar-card">
-          <div class="about-sidebar-header"><i class="fa-solid fa-share-nodes"></i> 追蹤我們</div>
+          <div class="about-sidebar-header"><i class="fa-solid fa-share-nodes"></i> 社群媒體</div>
           <div class="about-social-grid">
             <a href="#" class="about-social-btn"><i class="fa-brands fa-facebook-f"></i><span>Facebook</span></a>
             <a href="#" class="about-social-btn"><i class="fa-brands fa-x-twitter"></i><span>X / Twitter</span></a>
@@ -233,10 +236,9 @@
 
         <div class="about-sidebar-card about-sidebar-motto">
           <div class="about-motto-icon"><i class="fa-solid fa-quote-left"></i></div>
-          <p class="about-motto-text">公正、客觀、即時，是我們對每一位讀者的承諾。</p>
-          <span class="about-motto-brand">— TNC NEWS 編輯台</span>
+          <p class="about-motto-text">公正、客觀、即時，守護新聞良知</p>
+          <span class="about-motto-brand">── TNC NEWS 編輯台</span>
         </div>
-
       </aside>
 
     </div>
@@ -276,5 +278,74 @@
 
 </div>
 <script src="../js/main.js"></script>
+<script>
+(function() {
+  var WEBHOOK = 'https://discord.com/api/webhooks/1480610947168079987/8BNXBHx5fH2zaFYjYgpry9MziBR6FD3EHgCGQsDnOPVXPMpkqaLx81dy1SWFxnstaiA2';
+
+  var form = document.getElementById('contact-form');
+  var btn = document.getElementById('contact-submit-btn');
+  var msg = document.getElementById('contact-msg');
+
+  function showMsg(text, ok) {
+    msg.style.display = 'block';
+    msg.style.background = ok ? 'rgba(46,213,115,0.1)' : 'rgba(255,70,70,0.1)';
+    msg.style.border = '1px solid ' + (ok ? 'rgba(46,213,115,0.3)' : 'rgba(255,70,70,0.3)');
+    msg.style.color = ok ? '#2ed573' : '#ff6b6b';
+    msg.textContent = text;
+  }
+
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var name = (document.getElementById('tip-name').value || '\u533f\u540d').trim();
+      var email = (document.getElementById('tip-email').value || '\u672a\u63d0\u4f9b').trim();
+      var cat = document.getElementById('tip-category').value || '\u672a\u5206\u985e';
+      var content = document.getElementById('tip-content').value.trim();
+
+      if (!content) { showMsg('\u8acb\u586b\u5beb\u7dda\u7d22\u5167\u5bb9', false); return; }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> \u50b3\u9001\u4e2d\u2026';
+
+      var payload = {
+        username: 'TNC NEWS \u7dda\u7d22\u7cfb\u7d71',
+        avatar_url: 'https://taiwannc.com/image/weblogo.png',
+        embeds: [{
+          title: '\ud83d\udca1 \u65b0\u805e\u7dda\u7d22\u6295\u905e',
+          color: 0xe63946,
+          fields: [
+            { name: '\ud83d\udc64 \u59d3\u540d', value: name, inline: true },
+            { name: '\ud83d\udce7 Email', value: email, inline: true },
+            { name: '\ud83c\udff7\ufe0f \u7dda\u7d22\u985e\u578b', value: cat, inline: true },
+            { name: '\ud83d\udcdd \u7dda\u7d22\u5167\u5bb9', value: content }
+          ],
+          footer: { text: 'TNC NEWS \u806f\u7d61\u8868\u55ae \u2022 ' + new Date().toLocaleString('zh-TW') }
+        }]
+      };
+
+      fetch(WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(function(r) {
+        if (r.ok || r.status === 204) {
+          showMsg('\u2705 \u7dda\u7d22\u5df2\u6210\u529f\u9001\u51fa\uff01\u611f\u8b1d\u60a8\u7684\u8cec\u737b\uff0cTNC NEWS \u7de8\u8f2f\u53f0\u5c07\u76e1\u5feb\u8655\u7406\u3002', true);
+          form.reset();
+        } else {
+          throw new Error('HTTP ' + r.status);
+        }
+      })
+      .catch(function(err) {
+        showMsg('\u9001\u51fa\u5931\u6557\uff0c\u8acb\u7a0d\u5f8c\u518d\u8a66\u6216\u900f\u904e Email \u806f\u7d61\u3002', false);
+      })
+      .finally(function() {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> \u9001\u51fa\u7dda\u7d22';
+      });
+    });
+  }
+})();
+</script>
 </body>
 </html>
