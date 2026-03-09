@@ -511,38 +511,59 @@ function buildArticleHtml(article) {
 function publishArticlePage(article) {
   var token = state.apiKeys.githubToken;
   var repo = state.apiKeys.githubRepo;
-  if (!token || !repo) return;
+  if (!token || !repo) {
+    toast('\u672A\u8A2D\u5B9A GitHub Token\uFF0C\u7565\u904E\u767C\u5E03', 'info');
+    return;
+  }
 
-  var path = 'pages/news/' + article.id + '.html';
-  var content = buildArticleHtml(article);
-  var encoded = btoa(unescape(encodeURIComponent(content)));
-  var apiUrl = 'https://api.github.com/repos/' + repo + '/contents/' + path;
-
+  var newPath = 'pages/news/' + article.id + '.html';
+  var templatePath = 'pages/news/template.html';
+  var apiBase = 'https://api.github.com/repos/' + repo + '/contents/';
   var headers = {
     'Authorization': 'Bearer ' + token,
     'Accept': 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28'
   };
 
-  fetch(apiUrl, { headers: headers })
-    .then(function(r){ return r.status === 404 ? null : r.json(); })
-    .then(function(existing) {
-      var body = { message: 'publish: ' + article.title, content: encoded, branch: 'main' };
-      if (existing && existing.sha) body.sha = existing.sha;
-      return fetch(apiUrl, {
-        method: 'PUT',
-        headers: Object.assign({}, headers, { 'Content-Type': 'application/json' }),
-        body: JSON.stringify(body)
-      });
+  /* 1. 讀取 template.html 的 base64 內容 */
+  fetch(apiBase + templatePath, { headers: headers })
+    .then(function(r) {
+      if (!r.ok) throw new Error('無法讀取 template.html: HTTP ' + r.status);
+      return r.json();
     })
-    .then(function(r){
+    .then(function(tplData) {
+      var encoded = tplData.content.replace(/\n/g, '');
+      /* 2. 檢查目標檔案是否已存在（取 SHA） */
+      return fetch(apiBase + newPath, { headers: headers })
+        .then(function(r2) { return r2.ok ? r2.json() : null; })
+        .then(function(existing) {
+          var body = {
+            message: 'publish: ' + article.title,
+            content: encoded,
+            branch: 'main'
+          };
+          if (existing && existing.sha) body.sha = existing.sha;
+          /* 3. PUT 新檔案 */
+          return fetch(apiBase + newPath, {
+            method: 'PUT',
+            headers: Object.assign({}, headers, { 'Content-Type': 'application/json' }),
+            body: JSON.stringify(body)
+          });
+        });
+    })
+    .then(function(r) {
       if (r && (r.status === 200 || r.status === 201)) {
-        toast('\u9801\u9762\u5DF2\u767C\u5E03\uFF1A pages/news/' + article.id + '.html', 'success');
-      } else {
-        return r.json().then(function(e){ toast('GitHub \u767C\u5E03\u5931\u6557\uFF1A' + (e.message || r.status), 'warning'); });
+        var siteUrl = (state.apiKeys.siteUrl || '').replace(/\/$/, '');
+        var url = siteUrl ? siteUrl + '/' + newPath : newPath;
+        toast('\u9801\u9762\u5DF2\u767C\u5E03\uFF01' + newPath, 'success');
+        console.log('[TNC] \u6587\u7AE0\u9801\u9762:', url);
+      } else if (r) {
+        return r.json().then(function(e) {
+          toast('GitHub \u767C\u5E03\u5931\u6557\uFF1A' + (e.message || r.status), 'warning');
+        });
       }
     })
-    .catch(function(err){ toast('GitHub \u767C\u5E03\u5931\u6557\uFF1A' + err.message, 'warning'); });
+    .catch(function(err) { toast('GitHub \u767C\u5E03\u5931\u6557\uFF1A' + err.message, 'warning'); });
 }
 
 function resetForm() {

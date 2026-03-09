@@ -29,7 +29,7 @@
   }
 
   function articleUrl(article) {
-    return 'pages/article.html?id=' + encodeURIComponent(article.id);
+    return 'pages/news/' + encodeURIComponent(article.id) + '.html';
   }
 
   /* ===== HERO ===== */
