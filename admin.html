@@ -123,8 +123,36 @@
       </div>
 
       <!-- API GUIDE -->
-      <div id="api-guide" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease">
+          <div id="api-guide" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease">
         <div style="padding:16px 0 4px">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px">
+            <!-- GitHub Token -->
+            <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px;grid-column:1/-1">
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+                <i class="fa-brands fa-github" style="color:var(--text-muted)"></i>
+                <span style="font-size:0.8rem;font-weight:600;color:var(--text-primary)">GitHub Token 設定（自動發布文章頁必填）</span>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <ol style="padding-left:16px;font-size:0.77rem;color:var(--text-secondary);line-height:1.8">
+                  <li>前往 <a href="https://github.com/settings/tokens" target="_blank" style="color:var(--text-primary);text-decoration:underline">github.com/settings/tokens</a></li>
+                  <li>點 <strong style="color:var(--text-primary)">Generate new token (classic)</strong></li>
+                  <li>Note 填入 <code style="background:var(--bg-4);padding:1px 5px;border-radius:3px">TNC News Admin</code></li>
+                  <li>Expiration 選 <strong style="color:var(--text-primary)">No expiration</strong>（或自訂）</li>
+                  <li>勾選 <strong style="color:var(--text-primary)">repo</strong>（完整 repo 存取）</li>
+                  <li>點 <strong style="color:var(--text-primary)">Generate token</strong>，複製 token（<code style="background:var(--bg-4);padding:1px 5px;border-radius:3px">ghp_...</code>）</li>
+                </ol>
+                <div>
+                  <p style="font-size:0.77rem;color:var(--text-secondary);margin-bottom:8px">填入欄位：</p>
+                  <ul style="padding-left:16px;font-size:0.77rem;color:var(--text-secondary);line-height:1.9">
+                    <li><strong style="color:var(--text-primary)">GitHub Token</strong>：貼上剛複製的 <code style="background:var(--bg-4);padding:1px 5px;border-radius:3px">ghp_xxx</code></li>
+                    <li><strong style="color:var(--text-primary)">GitHub Repo</strong>：填入 <code style="background:var(--bg-4);padding:1px 5px;border-radius:3px">pacificbeachresortw/tnc-news</code></li>
+                    <li><strong style="color:var(--text-primary)">網站網址</strong>：填入 <code style="background:var(--bg-4);padding:1px 5px;border-radius:3px">https://taiwannc.com</code></li>
+                  </ul>
+                  <p style="font-size:0.75rem;color:var(--text-muted);margin-top:10px"><i class="fa-solid fa-circle-info"></i> 設定完成後，每次儲存新聞時系統會自動在 GitHub 建立 <code style="background:var(--bg-4);padding:1px 4px;border-radius:3px">pages/news/{id}.html</code> 檔案。</p>
+                </div>
+              </div>
+            </div>
+          </div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
 
             <!-- JSONbin Key -->
