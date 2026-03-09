@@ -91,7 +91,8 @@
 
   function getIdFromPath(){
     var p=location.pathname;
-    var m=p.match(/\/([^/]+)\.html$/);
+    /* 支援有/無 .html 副檔名的 URL */
+    var m=p.match(/\/([^/]+?)(?:\.html)?$/);
     return m?m[1]:null;
   }
 
@@ -149,7 +150,7 @@
   }
 
   var id=getIdFromPath();
-  if(!id||id==='template'){showError('\u6B64\u9801\u9762\u70BA\u6A23\u677F\uFF0C\u8ACB\u900F\u904E\u6B63\u78BA\u9023\u7D50\u958B\u555F\u6587\u7AE0');return;}
+  if(!id||id==='template'||id==='index'){showError('\u6B64\u9801\u9762\u70BA\u6A23\u677F\uFF0C\u8ACB\u900F\u904E\u6B63\u78BA\u9023\u7D50\u958B\u555F\u6587\u7AE0');return;}
   if(!KEY||!BID){showError('\u5C1A\u672A\u8A2D\u5B9A API \u91D1\u9470\uFF0C\u8ACB\u5148\u81F3\u5F8C\u53F0\u8A2D\u5B9A');return;}
 
   fetch('https://api.jsonbin.io/v3/b/'+BID+'/latest',{headers:{'X-Master-Key':KEY}})
