@@ -9,9 +9,18 @@
   try { keys = JSON.parse(localStorage.getItem('tnc_admin_keys') || '{}'); } catch (e) {}
 
   var JSONBIN_KEY = keys.jsonbinKey || '';
-  var JSONBIN_BIN = keys.jsonbinBinId || '';
+  /* Bin ID：優先 localStorage，否則從 config.js 讀取 */
+  var JSONBIN_BIN = keys.jsonbinBinId
+    || (window.TNC_CONFIG && window.TNC_CONFIG.jsonbinBinId)
+    || '';
 
-  if (!JSONBIN_KEY || !JSONBIN_BIN) return;
+  /* 需要 Bin ID 才能讀取 */
+  if (!JSONBIN_BIN) return;
+
+  /* 優先使用私有 Key，若無則嘗試公開存取（Bin 需設為 Public） */
+  var fetchHeaders = JSONBIN_KEY
+    ? { 'X-Master-Key': JSONBIN_KEY }
+    : {};
 
   function fmtDate(val) {
     if (!val) return '';
@@ -173,7 +182,7 @@
 
   /* ===== FETCH ===== */
   fetch('https://api.jsonbin.io/v3/b/' + JSONBIN_BIN + '/latest', {
-    headers: { 'X-Master-Key': JSONBIN_KEY }
+    headers: fetchHeaders
   })
   .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
   .then(function(data) {

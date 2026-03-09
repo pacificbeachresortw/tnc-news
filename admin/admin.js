@@ -66,6 +66,32 @@ function saveApiKeys() {
   localStorage.setItem('tnc_admin_keys', JSON.stringify(state.apiKeys));
   toast('API \u8A2D\u5B9A\u5DF2\u5132\u5B58', 'success');
   fetchNews();
+  /* 若有 GitHub Token，自動更新 js/config.js */
+  if (state.apiKeys.githubToken && state.apiKeys.githubRepo && state.apiKeys.jsonbinBinId) {
+    publishConfig();
+  }
+}
+
+function publishConfig() {
+  var token = state.apiKeys.githubToken;
+  var repo = state.apiKeys.githubRepo;
+  var binId = state.apiKeys.jsonbinBinId;
+  if (!token || !repo || !binId) return;
+
+  var configContent = '/* TNC NEWS - Public Config - auto-generated */\nwindow.TNC_CONFIG = {\n  jsonbinBinId: \'' + binId + '\'\n};\n';
+  var encoded = btoa(unescape(encodeURIComponent(configContent)));
+  var apiBase = 'https://api.github.com/repos/' + repo + '/contents/js/config.js';
+  var headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+
+  fetch(apiBase, { headers: headers })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(existing) {
+      var body = { message: 'config: update public jsonbin bin id', content: encoded, branch: 'main' };
+      if (existing && existing.sha) body.sha = existing.sha;
+      return fetch(apiBase, { method: 'PUT', headers: Object.assign({}, headers, {'Content-Type':'application/json'}), body: JSON.stringify(body) });
+    })
+    .then(function(r){ if (r && (r.status===200||r.status===201)) toast('config.js \u5DF2\u540C\u6B65\u5230 GitHub', 'success'); })
+    .catch(function(){});
 }
 
 function toggleApiPanel() {
