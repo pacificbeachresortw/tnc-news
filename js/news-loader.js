@@ -36,8 +36,11 @@
   function renderHero(news) {
     var hero = document.querySelector('.section-hero');
     if (!hero) return;
-    var top = news[0];
-    var sides = news.slice(1, 4);
+    /* 頭條新聞優先，否則取最新 */
+    var featured = news.filter(function(n){ return n.featured === true; });
+    var top = featured.length ? featured[0] : news[0];
+    var rest = news.filter(function(n){ return n !== top; });
+    var sides = rest.slice(0, 3);
 
     var primaryEl = hero.querySelector('.hero-primary');
     var sideEl = hero.querySelector('.hero-side');

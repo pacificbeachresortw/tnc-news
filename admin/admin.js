@@ -392,6 +392,7 @@ function saveNews() {
     imageSource: $('img-source').value.trim(),
     imagePhotographer: $('img-photographer').value.trim(),
     extraImages: extraImages.filter(function(i){ return i.url; }),
+    featured: $('f-featured') ? $('f-featured').checked : false,
     published: $('f-published').checked
   };
 
@@ -573,6 +574,7 @@ function resetForm() {
   clearExtraImages();
   if ($('img-source')) $('img-source').value = '';
   if ($('img-photographer')) $('img-photographer').value = '';
+  if ($('f-featured')) $('f-featured').checked = false;
   $('edit-mode-badge').classList.remove('show');
   $('btn-save').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> \u5132\u5B58\u65B0\u805E';
   $('btn-save').className = 'btn btn-primary';
@@ -595,6 +597,7 @@ function loadForEdit(article) {
   else { clearImage(); }
   if ($('img-source')) $('img-source').value = article.imageSource || '';
   if ($('img-photographer')) $('img-photographer').value = article.imagePhotographer || '';
+  if ($('f-featured')) $('f-featured').checked = article.featured === true;
   clearExtraImages();
   if (article.extraImages && article.extraImages.length) {
     article.extraImages.forEach(function(img){ addExtraImageSlot(img); });
@@ -663,6 +666,7 @@ function renderList() {
       + '<div class="news-item-body">'
       + '<div class="news-item-title">' + esc(n.title) + '</div>'
       + '<div class="news-item-meta">'
+      + (n.featured ? '<span style="font-size:0.72rem;background:rgba(255,255,255,0.08);color:#ccc;border:1px solid rgba(255,255,255,0.15);padding:1px 7px;border-radius:10px;font-weight:600"><i class="fa-solid fa-star" style="font-size:0.65rem"></i> \u982D\u689D</span>' : '')
       + '<span class="news-item-cat">' + (n.category || '') + '</span>'
       + '<span class="news-item-date"><i class="fa-regular fa-clock"></i>' + formatDateTime(n.date) + '</span>'
       + statusHtml
