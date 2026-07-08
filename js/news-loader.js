@@ -1,6 +1,6 @@
 /* TNC NEWS - News Loader
- * 從 JSONbin 讀取新聞並渲染到前台頁面
- * API Key 讀自 localStorage（由 admin.html 儲存）
+ * 優先讀取 js/news-data.json（公開靜態檔，所有訪客可讀）
+ * 後台瀏覽器可 fallback 至 JSONBin（需 API Key）
  */
 (function () {
   'use strict';
@@ -9,18 +9,36 @@
   try { keys = JSON.parse(localStorage.getItem('tnc_admin_keys') || '{}'); } catch (e) {}
 
   var JSONBIN_KEY = keys.jsonbinKey || '';
-  /* Bin ID：優先 localStorage，否則從 config.js 讀取 */
   var JSONBIN_BIN = keys.jsonbinBinId
     || (window.TNC_CONFIG && window.TNC_CONFIG.jsonbinBinId)
     || '';
 
-  /* 需要 Bin ID 才能讀取 */
-  if (!JSONBIN_BIN) return;
+  var CAT_PAGES = {
+    society: '\u793E\u6703',
+    international: '\u570B\u969B',
+    tech: '\u79D1\u6280',
+    entertainment: '\u5A1B\u6A02',
+    sports: '\u9AD4\u80B2',
+    life: '\u751F\u6D3B'
+  };
 
-  /* 優先使用私有 Key，若無則嘗試公開存取（Bin 需設為 Public） */
-  var fetchHeaders = JSONBIN_KEY
-    ? { 'X-Master-Key': JSONBIN_KEY }
-    : {};
+  function isInPagesDir() {
+    return window.location.pathname.indexOf('/pages/') !== -1;
+  }
+
+  function dataFileUrl() {
+    return (isInPagesDir() ? '../js/news-data.json' : 'js/news-data.json') + '?_=' + Date.now();
+  }
+
+  function articleUrl(article) {
+    var prefix = isInPagesDir() ? 'news/' : 'pages/news/';
+    return prefix + encodeURIComponent(article.id) + '.html';
+  }
+
+  function getPageCategory() {
+    var match = /\/([^/]+)\.html$/.exec(window.location.pathname);
+    return match && CAT_PAGES[match[1]] ? CAT_PAGES[match[1]] : null;
+  }
 
   function fmtDate(val) {
     if (!val) return '';
@@ -34,21 +52,20 @@
   }
 
   function esc(str) {
-    return String(str || '').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"');
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function articleUrl(article) {
-    return 'pages/news/' + encodeURIComponent(article.id) + '.html';
+  function publishedNews(news) {
+    return news.filter(function(n) { return n.published !== false; });
   }
 
-  /* ===== HERO ===== */
+  /* ===== INDEX PAGE ===== */
   function renderHero(news) {
     var hero = document.querySelector('.section-hero');
     if (!hero) return;
-    /* 頭條新聞優先，否則取最新 */
-    var featured = news.filter(function(n){ return n.featured === true; });
+    var featured = news.filter(function(n) { return n.featured === true; });
     var top = featured.length ? featured[0] : news[0];
-    var rest = news.filter(function(n){ return n !== top; });
+    var rest = news.filter(function(n) { return n !== top; });
     var sides = rest.slice(0, 3);
 
     var primaryEl = hero.querySelector('.hero-primary');
@@ -83,23 +100,22 @@
     }).join('');
   }
 
-  /* ===== BREAKING TICKER ===== */
   function renderBreakingTicker(news) {
     var track = document.querySelector('.ticker-track');
     if (!track) return;
-    var breaking = news.filter(function(n){ return n.category === '\u5373\u6642'; }).slice(0, 8);
+    var breaking = news.filter(function(n) { return n.category === '\u5373\u6642'; }).slice(0, 8);
     var items = breaking.length ? breaking : news.slice(0, 5);
-    var txt = items.map(function(n){ return esc(n.title); }).join(' &nbsp;&bull;&nbsp; ');
+    if (!items.length) return;
+    var txt = items.map(function(n) { return esc(n.title); }).join(' &nbsp;&bull;&nbsp; ');
     track.innerHTML = '<span>' + txt + ' &nbsp;&bull;&nbsp; ' + txt + '</span>';
   }
 
-  /* ===== CATEGORY SECTIONS ===== */
   function renderCatSection(cat, news) {
     var sec = document.querySelector('.cat-section[data-cat="' + cat + '"]');
     if (!sec) return;
     var grid = sec.querySelector('.cat-grid');
     if (!grid) return;
-    var items = news.filter(function(n){ return n.category === cat; }).slice(0, 2);
+    var items = news.filter(function(n) { return n.category === cat; }).slice(0, 2);
     if (!items.length) return;
     grid.innerHTML = items.map(function(n) {
       var imgHtml = n.image
@@ -115,20 +131,19 @@
     }).join('');
   }
 
-  /* ===== HOT LIST ===== */
   function renderHotList(news) {
     var list = document.querySelector('.hot-list');
     if (!list) return;
     var items = news.slice(0, 5);
+    if (!items.length) return;
     list.innerHTML = items.map(function(n, i) {
       return '<li class="hot-item">'
-        + '<span class="hot-rank">' + String(i+1).padStart(2,'0') + '</span>'
+        + '<span class="hot-rank">' + String(i + 1).padStart(2, '0') + '</span>'
         + '<a href="' + articleUrl(n) + '">' + esc(n.title) + '</a>'
         + '</li>';
     }).join('');
   }
 
-  /* ===== SIDEBAR WIDGETS ===== */
   function renderSidebarWidget(cat, news) {
     var iconMap = {
       '\u79D1\u6280': 'fa-microchip',
@@ -148,7 +163,7 @@
     if (!target) return;
     var wlist = target.querySelector('.widget-news-list');
     if (!wlist) return;
-    var items = news.filter(function(n){ return n.category === cat; }).slice(0, 3);
+    var items = news.filter(function(n) { return n.category === cat; }).slice(0, 3);
     if (!items.length) return;
     wlist.innerHTML = items.map(function(n) {
       return '<div class="wn-item">'
@@ -162,33 +177,111 @@
     }).join('');
   }
 
-  /* ===== MAIN ===== */
   function renderIndex(news) {
-    var published = news.filter(function(n){ return n.published !== false; });
-    if (!published.length) return;
-    renderHero(published);
-    renderBreakingTicker(published);
-    renderCatSection('\u793E\u6703', published);
-    renderCatSection('\u570B\u969B', published);
-    renderCatSection('\u79D1\u6280', published);
-    renderCatSection('\u5A1B\u6A02', published);
-    renderCatSection('\u9AD4\u80B2', published);
-    renderCatSection('\u751F\u6D3B', published);
-    renderHotList(published);
-    renderSidebarWidget('\u79D1\u6280', published);
-    renderSidebarWidget('\u5A1B\u6A02', published);
-    renderSidebarWidget('\u9AD4\u80B2', published);
+    if (!news.length) return;
+    renderHero(news);
+    renderBreakingTicker(news);
+    renderCatSection('\u793E\u6703', news);
+    renderCatSection('\u570B\u969B', news);
+    renderCatSection('\u79D1\u6280', news);
+    renderCatSection('\u5A1B\u6A02', news);
+    renderCatSection('\u9AD4\u80B2', news);
+    renderCatSection('\u751F\u6D3B', news);
+    renderHotList(news);
+    renderSidebarWidget('\u79D1\u6280', news);
+    renderSidebarWidget('\u5A1B\u6A02', news);
+    renderSidebarWidget('\u9AD4\u80B2', news);
   }
 
-  /* ===== FETCH ===== */
-  fetch('https://api.jsonbin.io/v3/b/' + JSONBIN_BIN + '/latest', {
-    headers: fetchHeaders
-  })
-  .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-  .then(function(data) {
-    var news = (data.record && data.record.news) || [];
-    if (document.querySelector('.section-hero')) renderIndex(news);
-  })
-  .catch(function(err) { console.warn('[TNC news-loader] ' + err.message); });
+  /* ===== CATEGORY PAGE ===== */
+  function renderCategoryPage(cat, news) {
+    var catNews = news.filter(function(n) { return n.category === cat; });
+    if (!catNews.length) return;
+
+    renderBreakingTicker(news);
+
+    var stats = document.querySelectorAll('.cat-banner-stat');
+    if (stats[0]) stats[0].innerHTML = '<i class="fa-regular fa-newspaper"></i> \u5171 ' + catNews.length + ' \u7BC7\u6587\u7AE0';
+    if (stats[1]) stats[1].innerHTML = '<i class="fa-regular fa-clock"></i> \u6700\u5F8C\u66F4\u65B0\uFF1A' + fmtDate(catNews[0].date);
+
+    var featuredWrap = document.querySelector('.cat-featured .news-card--hero');
+    if (featuredWrap) {
+      var top = catNews[0];
+      var imgHtml = top.image
+        ? '<img src="' + esc(top.image) + '" alt="' + esc(top.title) + '" style="width:100%;height:100%;object-fit:cover;display:block" />'
+        : '<div class="placeholder-icon"><i class="fa-regular fa-newspaper"></i></div>';
+      featuredWrap.innerHTML = '<a href="' + articleUrl(top) + '" class="card-img card-img--placeholder">' + imgHtml + '</a>'
+        + '<div class="card-body">'
+        + '<span class="card-tag">' + esc(top.category) + '</span>'
+        + '<h2 class="card-title"><a href="' + articleUrl(top) + '">' + esc(top.title) + '</a></h2>'
+        + (top.excerpt ? '<p class="card-excerpt">' + esc(top.excerpt) + '</p>' : '')
+        + '<div class="card-meta"><span><i class="fa-regular fa-clock"></i> ' + fmtDate(top.date) + '</span>'
+        + '<span><i class="fa-regular fa-user"></i> ' + esc(top.author || 'TNC \u7DE8\u8F2F') + '</span></div>'
+        + '</div>';
+    }
+
+    var countEl = document.querySelector('.articles-count');
+    if (countEl) countEl.textContent = '\u5171 ' + catNews.length + ' \u7BC7';
+
+    var grid = document.querySelector('.articles-grid');
+    if (grid) {
+      grid.innerHTML = catNews.slice(0, 12).map(function(n) {
+        var imgHtml = n.image
+          ? '<img src="' + esc(n.image) + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />'
+          : '<i class="fa-solid fa-newspaper"></i>';
+        return '<div class="article-card">'
+          + '<a href="' + articleUrl(n) + '" class="article-card-img">' + imgHtml + '</a>'
+          + '<div class="article-card-body">'
+          + '<span class="article-card-tag">' + esc(n.category) + '</span>'
+          + '<p class="article-card-title"><a href="' + articleUrl(n) + '">' + esc(n.title) + '</a></p>'
+          + '<div class="article-card-meta"><span><i class="fa-regular fa-clock"></i> ' + fmtDate(n.date) + '</span></div>'
+          + '</div></div>';
+      }).join('');
+    }
+
+    renderHotList(news);
+  }
+
+  function renderAll(news) {
+    var published = publishedNews(news);
+    if (!published.length) return;
+
+    if (document.querySelector('.section-hero')) {
+      renderIndex(published);
+      return;
+    }
+
+    var pageCat = getPageCategory();
+    if (pageCat) renderCategoryPage(pageCat, published);
+  }
+
+  function fetchFromJsonbin() {
+    if (!JSONBIN_BIN) return Promise.reject(new Error('missing bin id'));
+    var headers = JSONBIN_KEY ? { 'X-Master-Key': JSONBIN_KEY } : {};
+    return fetch('https://api.jsonbin.io/v3/b/' + JSONBIN_BIN + '/latest', { headers: headers })
+      .then(function(r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function(data) { return (data.record && data.record.news) || []; });
+  }
+
+  function fetchFromStaticFile() {
+    return fetch(dataFileUrl(), { cache: 'no-store' })
+      .then(function(r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function(data) { return data.news || []; });
+  }
+
+  fetchFromStaticFile()
+    .then(renderAll)
+    .catch(function() {
+      return fetchFromJsonbin().then(renderAll);
+    })
+    .catch(function(err) {
+      console.warn('[TNC news-loader] ' + err.message);
+    });
 
 })();

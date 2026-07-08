@@ -369,6 +369,9 @@ function fetchNews() {
       setStatus('connected');
       renderList();
       updatePreview();
+      if (state.apiKeys.githubToken && state.apiKeys.githubRepo) {
+        publishNewsData(true);
+      }
     })
     .catch(function(err) { setStatus('error'); toast('\u8F09\u5165\u5931\u6557\uFF1A' + err.message, 'error'); })
     .finally(function() { showLoading(false); });
@@ -435,11 +438,55 @@ function saveNews() {
     .then(function() {
       toast(isEdit ? '\u65B0\u805E\u5DF2\u66F4\u65B0' : '\u65B0\u805E\u5DF2\u65B0\u589E', 'success');
       publishArticlePage(article);
+      publishNewsData();
       resetForm();
       renderList();
     })
     .catch(function(err) { toast('\u5132\u5B58\u5931\u6557\uFF1A' + err.message, 'error'); })
     .finally(function() { $('btn-save').disabled = false; });
+}
+
+/* GITHUB - publish public news JSON for frontend visitors */
+function publishNewsData(silent) {
+  var token = state.apiKeys.githubToken;
+  var repo = state.apiKeys.githubRepo;
+  if (!token || !repo) return Promise.resolve();
+
+  var jsonContent = JSON.stringify({ news: state.news }, null, 2);
+  return githubPutFile('js/news-data.json', jsonContent, 'data: sync public news feed')
+    .then(function(ok) {
+      if (ok && !silent) toast('前台新聞資料已同步', 'success');
+    })
+    .catch(function(err) {
+      if (!silent) toast('前台資料同步失敗：' + err.message, 'warning');
+    });
+}
+
+function githubPutFile(path, content, message) {
+  var token = state.apiKeys.githubToken;
+  var repo = state.apiKeys.githubRepo;
+  if (!token || !repo) return Promise.resolve(false);
+
+  var encoded = btoa(unescape(encodeURIComponent(content)));
+  var apiBase = 'https://api.github.com/repos/' + repo + '/contents/' + path;
+  var headers = {
+    'Authorization': 'Bearer ' + token,
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  };
+
+  return fetch(apiBase, { headers: headers })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(existing) {
+      var body = { message: message, content: encoded, branch: 'main' };
+      if (existing && existing.sha) body.sha = existing.sha;
+      return fetch(apiBase, {
+        method: 'PUT',
+        headers: Object.assign({}, headers, { 'Content-Type': 'application/json' }),
+        body: JSON.stringify(body)
+      });
+    })
+    .then(function(r) { return !!(r && (r.status === 200 || r.status === 201)); });
 }
 
 /* GITHUB - publish static article page */
@@ -655,6 +702,7 @@ function confirmDelete() {
   saveToJsonbin()
     .then(function() {
       toast('\u65B0\u805E\u5DF2\u522A\u9664', 'success');
+      publishNewsData();
       if (state.editingId === delId) resetForm();
       renderList();
     })
