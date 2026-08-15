@@ -1,21 +1,6 @@
 {
   "news": [
     {
-      "id": "1775800028491",
-      "title": "測試",
-      "category": "即時",
-      "excerpt": "測試",
-      "content": "測試",
-      "author": "測試",
-      "date": "2026-04-10T13:45",
-      "image": "",
-      "imageSource": "",
-      "imagePhotographer": "",
-      "extraImages": [],
-      "featured": false,
-      "published": true
-    },
-    {
       "id": "1773296455847",
       "title": "Apple 發表史上最平價 MacBook Neo：兩萬有找，專為學生打造",
       "category": "科技",
